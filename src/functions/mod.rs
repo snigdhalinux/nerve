@@ -6,3 +6,8 @@ pub mod partition;
 // pub mod unakite;
 pub mod users;
 mod code;
+mod browsers;
+mod displaymanagers;
+mod filemanagers;
+mod shells;
+mod terminals;
