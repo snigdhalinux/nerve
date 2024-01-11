@@ -18,83 +18,84 @@ pub fn install_code_setup(code_setup:CodeSetup){
         CodeSetup::PhpStormEAP => install_snigdha_phpstorm_eap(),
         CodeSetup::Idea => install_snigdha_idea_ultimate(),
         CodeSetup::IdeaCommunity => install_snigdha_idea_community(),
+        CodeSetup::None => log::debug!("No Ide Setup Selected!"),
     }
 }
 
 fn install_snigdha_vs_code(){
     install(PackageManager::Pacman, vec![
-        "vsiual-studio-code-bin"
+        "vsiual-studio-code-bin",
     ]);
 }
 
 fn install_snigdha_vscodium(){
     install(PackageManager::Pacman, vec![
-        "vscodium-bin"
+        "vscodium-bin",
     ]);
 }
 
 fn install_snigdha_pycharm_professional(){
     install(PackageManager::Pacman, vec![
-        "pycharm-professional"
+        "pycharm-professional",
     ]);
 }
 
 fn install_snigdha_pycharm_eap(){
     install(PackageManager::Pacman, vec![
-        "pycharm-eap"
+        "pycharm-eap",
     ]);
 }
 
 fn install_snigdha_pycharm_community(){
     install(PackageManager::Pacman, vec![
-        "pycham-community-eap"
+        "pycham-community-eap",
     ]);
 }
 
 fn install_snigdha_clion(){
     install(PackageManager::Pacman, vec![
-        "clion"
+        "clion",
     ]);
 }
 
 fn install_snigdha_clion_eap(){
     install(PackageManager::Pacman, vec![
-        "clion-eap"
+        "clion-eap",
     ]);
 }
 
 fn install_snigdha_rustrover(){
     install(PackageManager::Pacman, vec![
-        "rustrover"
+        "rustrover",
     ]);
 }
 
 fn install_snigdha_rustrover_eap(){
     install(PackageManager::Pacman, vec![
-        "rustrover-eap"
+        "rustrover-eap",
     ]);
 }
 
 fn install_snigdha_phpstorm(){
     install(PackageManager::Pacman, vec![
-        "phpstorm"
+        "phpstorm",
     ]);
 }
 
 fn install_snigdha_phpstorm_eap(){
     install(PackageManager::Pacman, vec![
-        "phpstorm-eap"
+        "phpstorm-eap",
     ]);
 }
 
 fn install_snigdha_idea_ultimate(){
     install(PackageManager::Pacman, vec![
-        "intellij-idea-ultimate-edition"
+        "intellij-idea-ultimate-edition",
     ]);
 }
 
 fn install_snigdha_idea_community(){
     install(PackageManager::Pacman, vec![
-        "intellij-idea-community-edition-jre"
+        "intellij-idea-community-edition-jre",
     ]);
 }

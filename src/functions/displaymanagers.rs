@@ -12,21 +12,22 @@ pub fn install_dm_setup(dm_setup: DMSetup){
 
 fn install_gdm(){
     install(PackageManager::Pacman, vec![
-        "gdm"
+        "gdm",
     ]);
     enable_service("gdm");
 }
 
 fn install_sddm(){
     install(PackageManager::Pacman, vec![
-        "sddm"
+        "sddm",
     ]);
     enable_service("sddm");
 }
 
 fn install_lightdm(){
     install(PackageManager::Pacman, vec![
-        "sddm"
+        "sddm",
     ]);
     enable_service("lightdm")
 }
+

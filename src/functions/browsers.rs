@@ -18,42 +18,42 @@ pub fn install_browser_setup(browser_setup: BrowserSetup){
 
 fn install_snigdha_brave(){
     install(PackageManager::Pacman, vec![
-        "snigdhaos-brave-config"
+        "snigdhaos-brave-config",
     ]);
 }
 
 fn install_snigdha_google_chrome(){
     install(PackageManager::Pacman, vec![
-        "google-chrome"
+        "google-chrome",
     ]);
 }
 
 fn install_snigdha_firefox(){
     install(PackageManager::Pacman, vec![
-        "snigdhaos-firefox-config"
+        "snigdhaos-firefox-config",
     ]);
 }
 
 fn install_snigdha_tor_browser(){
     install(PackageManager::Pacman, vec![
-        "tor-browser-bin"
+        "tor-browser-bin",
     ]);
 }
 
 fn install_snigdha_ms_edge(){
     install(PackageManager::Pacman, vec![
-        "microsoft-edge-stable-bin"
+        "microsoft-edge-stable-bin",
     ]);
 }
 
 fn install_snigdha_thorium(){
     install(PackageManager::Pacman, vec![
-        "thorium-browser-bin"
+        "thorium-browser-bin",
     ]);
 }
 
 fn install_snigdha_ungoogled_chromium(){
     install(PackageManager::Pacman, vec![
-        "ungoogled-chromium"
+        "ungoogled-chromium",
     ]);
 }
