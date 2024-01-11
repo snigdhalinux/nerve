@@ -13,10 +13,9 @@ pub fn install_base_packages(kernel: String) {
             "linux" => "linux",
             "linux-lts" => "linux-lts",
             "linux-zen" => "linux-zen",
-            "linux-hardened" => "linux-hardened",
             _ => {
                 warn!("Unknown kernel: {}, using default instead", kernel);
-                "linux"
+                "linux-zen"
             }
         }
     };
@@ -106,9 +105,9 @@ pub fn install_bootloader_efi(efidir: PathBuf) {
     install::install(vec![
         "grub",
         "efibootmgr",
-        "crystal-grub-theme",
+        "snigdhaos-arctic-grub-theme",
         "os-prober",
-        "crystal-branding",
+        // "crystal-branding",
     ]);
     let efidir = std::path::Path::new("/mnt").join(efidir);
     let efi_str = efidir.to_str().unwrap();
