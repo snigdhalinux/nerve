@@ -13,3 +13,4 @@ mod shells;
 mod terminals;
 mod git;
 mod password;
+mod communication;
