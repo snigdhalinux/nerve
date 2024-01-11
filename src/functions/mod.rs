@@ -12,3 +12,4 @@ mod filemanagers;
 mod shells;
 mod terminals;
 mod git;
+mod password;
