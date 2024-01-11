@@ -1,5 +1,6 @@
 
-# Jade
+# NERVE - SNIGDHA OS INSTALLER
+# CREDIT : JADE - Crystal Linux
 
 Jade is an installer backend for crystal linux.
 
