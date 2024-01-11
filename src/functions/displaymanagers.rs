@@ -6,7 +6,7 @@ use crate::internal::services::enable_service;
 pub fn install_dm_setup(dm_setup: DMSetup){
     log::debug!("Installing {:?}", dm_setup);
     match dm_setup{
-
+        DMSetup::None => log::debug!("No display manager setup selected!"),
     }
 }
 
