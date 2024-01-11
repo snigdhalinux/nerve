@@ -11,3 +11,4 @@ mod displaymanagers;
 mod filemanagers;
 mod shells;
 mod terminals;
+mod git;
