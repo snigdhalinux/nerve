@@ -198,7 +198,7 @@ pub fn read_config(configpath: PathBuf) {
     for i in 0..config.extra_packages.len() {
         extra_packages.push(config.extra_packages[i].as_str());
     }
-    install(extra_packages);
+    install(, extra_packages);
     log::info!("Setup unakite");
     if config.partition.mode == PartitionMode::Auto
         && !config.partition.efi

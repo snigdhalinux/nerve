@@ -19,56 +19,57 @@ pub fn install_base_packages(kernel: String) {
             }
         }
     };
-    install::install(vec![
-        // Base Arch
-        "base",
-        kernel_to_install,
-        format!("{kernel_to_install}-headers").as_str(),
-        "linux-firmware",
-        "systemd-sysvcompat",
-        "networkmanager",
-        "man-db",
-        "man-pages",
-        "texinfo",
-        "nano",
-        "sudo",
-        "curl",
-        "archlinux-keyring",
-        // Base Crystal
-        "crystal-core",
-        "crystal-branding",
-        // Extra goodies
-        "neofetch",
-        "btrfs-progs",
-        "which",
-        "base-devel",
-        // Fonts
-        "noto-fonts",
-        "noto-fonts-emoji",
-        "noto-fonts-cjk",
-        "noto-fonts-extra",
-        "ttf-nerd-fonts-symbols-common",
-        "vazirmatn-fonts",
-        // Common packages for all desktops
-        "xterm",
-        "pipewire",
-        "pipewire-pulse",
-        "pipewire-alsa",
-        "pipewire-jack",
-        "wireplumber",
-        "crystal-first-setup",
-        "crystal-wallpapers",
-        "power-profiles-daemon",
-        "cups",
-        "cups-pdf",
-        "bluez",
-        "bluez-cups",
-        "ntfs-3g",
-        "bash-completion",
-        "zsh-completions",
-        "ttf-liberation",
-        "dnsmasq",
-    ]);
+    install::install(
+        , vec![
+                // Base Arch
+                "base",
+                kernel_to_install,
+                format!("{kernel_to_install}-headers").as_str(),
+                "linux-firmware",
+                "systemd-sysvcompat",
+                "networkmanager",
+                "man-db",
+                "man-pages",
+                "texinfo",
+                "nano",
+                "sudo",
+                "curl",
+                "archlinux-keyring",
+                // Base Crystal
+                "crystal-core",
+                "crystal-branding",
+                // Extra goodies
+                "neofetch",
+                "btrfs-progs",
+                "which",
+                "base-devel",
+                // Fonts
+                "noto-fonts",
+                "noto-fonts-emoji",
+                "noto-fonts-cjk",
+                "noto-fonts-extra",
+                "ttf-nerd-fonts-symbols-common",
+                "vazirmatn-fonts",
+                // Common packages for all desktops
+                "xterm",
+                "pipewire",
+                "pipewire-pulse",
+                "pipewire-alsa",
+                "pipewire-jack",
+                "wireplumber",
+                "crystal-first-setup",
+                "crystal-wallpapers",
+                "power-profiles-daemon",
+                "cups",
+                "cups-pdf",
+                "bluez",
+                "bluez-cups",
+                "ntfs-3g",
+                "bash-completion",
+                "zsh-completions",
+                "ttf-liberation",
+                "dnsmasq",
+            ]);
     files::copy_file("/etc/pacman.conf", "/mnt/etc/pacman.conf");
 
     exec_eval(
@@ -102,13 +103,14 @@ pub fn genfstab() {
 }
 
 pub fn install_bootloader_efi(efidir: PathBuf) {
-    install::install(vec![
-        "grub",
-        "efibootmgr",
-        "snigdhaos-arctic-grub-theme",
-        "os-prober",
-        // "crystal-branding",
-    ]);
+    install::install(
+        , vec![
+                "grub",
+                "efibootmgr",
+                "snigdhaos-arctic-grub-theme",
+                "os-prober",
+                // "crystal-branding",
+            ]);
     let efidir = std::path::Path::new("/mnt").join(efidir);
     let efi_str = efidir.to_str().unwrap();
     if !std::path::Path::new(&format!("/mnt{efi_str}")).exists() {
@@ -154,12 +156,13 @@ pub fn install_bootloader_efi(efidir: PathBuf) {
 }
 
 pub fn install_bootloader_legacy(device: PathBuf) {
-    install::install(vec![
-        "grub",
-        "crystal-grub-theme",
-        "os-prober",
-        "crystal-branding",
-    ]);
+    install::install(
+        , vec![
+                "grub",
+                "crystal-grub-theme",
+                "os-prober",
+                "crystal-branding",
+            ]);
     if !device.exists() {
         crash(format!("The device {device:?} does not exist"), 1);
     }
@@ -188,7 +191,7 @@ pub fn install_bootloader_legacy(device: PathBuf) {
 }
 
 pub fn setup_timeshift() {
-    install(vec!["timeshift", "timeshift-autosnap", "grub-btrfs"]);
+    install(, vec!["timeshift", "timeshift-autosnap", "grub-btrfs"]);
     exec_eval(
         exec_chroot("timeshift", vec![String::from("--btrfs")]),
         "setup timeshift",
@@ -196,11 +199,11 @@ pub fn setup_timeshift() {
 }
 
 pub fn install_homemgr() {
-    install(vec!["nix"]);
+    install(, vec!["nix"]);
 }
 
 pub fn install_flatpak() {
-    install(vec!["flatpak"]);
+    install(, vec!["flatpak"]);
     exec_eval(
         exec_chroot(
             "flatpak",
@@ -216,7 +219,7 @@ pub fn install_flatpak() {
 }
 
 pub fn install_zram() {
-    install(vec!["zram-generator"]);
+    install(, vec!["zram-generator"]);
     files::create_file("/mnt/etc/systemd/zram-generator.conf");
     files_eval(
         files::append_file("/mnt/etc/systemd/zram-generator.conf", "[zram0]"),

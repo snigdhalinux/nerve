@@ -25,7 +25,7 @@ pub fn install_desktop_setup(desktop_setup: DesktopSetup) {
 }
 
 fn install_networkmanager() {
-    install(vec!["networkmanager"]);
+    install(, vec!["networkmanager"]);
     exec_eval(
         exec_chroot(
             "systemctl",
@@ -57,17 +57,18 @@ fn install_networkmanager() {
 // }
 
 fn install_awesome() {
-    install(vec![
-        "xorg",
-        "awesome",
-        "dex",
-        "rlwrap",
-        "vicious",
-        "lightdm",
-        "lightdm-gtk-greeter",
-        "lightdm-gtk-greeter-settings",
-        "xdg-user-dirs",
-    ]);
+    install(
+        , vec![
+                "xorg",
+                "awesome",
+                "dex",
+                "rlwrap",
+                "vicious",
+                "lightdm",
+                "lightdm-gtk-greeter",
+                "lightdm-gtk-greeter-settings",
+                "xdg-user-dirs",
+            ]);
     files_eval(
         files::append_file(
             "/mnt/etc/lightdm/lightdm.conf",
@@ -211,20 +212,21 @@ fn install_awesome() {
 // }
 
 fn install_xfce() {
-    install(vec![
-        "xorg",
-        "xfce4",
-        "lightdm",
-        "lightdm-gtk-greeter",
-        "lightdm-gtk-greeter-settings",
-        "xfce4-goodies",
-        "pipewire",
-        "pipewire-pulse",
-        "pipewire-jack",
-        "pipewire-alsa",
-        "wireplumber",
-        "pavucontrol",
-    ]);
+    install(
+        , vec![
+                "xorg",
+                "xfce4",
+                "lightdm",
+                "lightdm-gtk-greeter",
+                "lightdm-gtk-greeter-settings",
+                "xfce4-goodies",
+                "pipewire",
+                "pipewire-pulse",
+                "pipewire-jack",
+                "pipewire-alsa",
+                "wireplumber",
+                "pavucontrol",
+            ]);
     files_eval(
         files::append_file(
             "/mnt/etc/lightdm/lightdm.conf",
@@ -313,34 +315,36 @@ fn install_xfce() {
 // }
 
 fn install_kde() {
-    install(vec![
-        "xorg",
-        "plasma",
-        "plasma-wayland-session",
-        "kde-utilities",
-        "kde-system",
-        "pipewire",
-        "pipewire-pulse",
-        "pipewire-alsa",
-        "pipewire-jack",
-        "wireplumber",
-        "sddm",
-    ]);
+    install(
+        , vec![
+                "xorg",
+                "plasma",
+                "plasma-wayland-session",
+                "kde-utilities",
+                "kde-system",
+                "pipewire",
+                "pipewire-pulse",
+                "pipewire-alsa",
+                "pipewire-jack",
+                "wireplumber",
+                "sddm",
+            ]);
     enable_dm("sddm");
 }
 
 fn install_snigdha_gnome() {
-    install(vec![
-        "xorg",
-        "snigdha-gnome-config",
-        "sushi",
-        "pipewire",
-        "pipewire-pulse",
-        "pipewire-alsa",
-        "pipewire-jack",
-        "wireplumber",
-        "gdm",
-    ]);
+    install(
+        , vec![
+                "xorg",
+                "snigdha-gnome-config",
+                "sushi",
+                "pipewire",
+                "pipewire-pulse",
+                "pipewire-alsa",
+                "pipewire-jack",
+                "wireplumber",
+                "gdm",
+            ]);
     enable_dm("gdm");
 }
 

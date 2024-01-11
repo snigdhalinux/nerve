@@ -24,7 +24,7 @@ pub fn install_code_setup(code_setup:CodeSetup){
 
 fn install_snigdha_vs_code(){
     install(PackageManager::Pacman, vec![
-        "vsiual-studio-code-bin",
+        "visual-studio-code-bin",
     ]);
 }
 
@@ -48,7 +48,7 @@ fn install_snigdha_pycharm_eap(){
 
 fn install_snigdha_pycharm_community(){
     install(PackageManager::Pacman, vec![
-        "pycham-community-eap",
+        "pycharm-community-eap",
     ]);
 }
 
