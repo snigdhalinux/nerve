@@ -1,92 +1,31 @@
 use crate::args::PackageManager;
 use crate::internal::exec::*;
-use crate::internal::files::append_file;
+
+// use crate::internal::files::append_file;
 use crate::internal::*;
 use log::warn;
 use std::path::PathBuf;
 
-pub fn install_base_packages(kernel: String) {
+pub fn install_base_packages() {
     std::fs::create_dir_all("/mnt/etc").unwrap();
-    let kernel_to_install = if kernel.is_empty() {
-        "linux"
-    } else {
-        match kernel.as_str() {
-            "linux" => "linux",
-            "linux-lts" => "linux-lts",
-            "linux-zen" => "linux-zen",
-            _ => {
-                warn!("Unknown kernel: {}, using default instead", kernel);
-                "linux"
-            }
-        }
-    };
-    install::install(vec![
-        // Base Arch
-        "base",
-        kernel_to_install,
-        format!("{kernel_to_install}-headers").as_str(),
-        "linux-firmware",
-        "systemd-sysvcompat",
-        "networkmanager",
-        "man-db",
-        "man-pages",
-        "texinfo",
-        "nano",
-        "sudo",
-        "curl",
-        "archlinux-keyring",
-        // Base Crystal
-        "crystal-core",
-        "crystal-branding",
-        // Extra goodies
-        "neofetch",
-        "btrfs-progs",
-        "which",
-        "base-devel",
-        // Fonts
-        "noto-fonts",
-        "noto-fonts-emoji",
-        "noto-fonts-cjk",
-        "noto-fonts-extra",
-        "ttf-nerd-fonts-symbols-common",
-        "vazirmatn-fonts",
-        // Common packages for all desktops
-        "xterm",
-        "pipewire",
-        "pipewire-pulse",
-        "pipewire-alsa",
-        "pipewire-jack",
-        "wireplumber",
-        "crystal-first-setup",
-        "crystal-wallpapers",
-        "power-profiles-daemon",
-        "cups",
-        "cups-pdf",
-        "bluez",
-        "bluez-cups",
-        "ntfs-3g",
-        "bash-completion",
-        "zsh-completions",
-        "ttf-liberation",
-        "dnsmasq",
-    ]);
+    init_snigdha_keyring();
     files::copy_file("/etc/pacman.conf", "/mnt/etc/pacman.conf");
+    install::install(PackageManager::Pacstrap, vec![
+        "base",
+        "glibc-locales",
+        "snigdhaos-mirrorlist",
+        "chaotic-mirrorlist",
+        "rate-mirrors",
+        "snigdhaos-keyring",
+        "chaotic-keyring",
+        "archlinux-keyring",
+    ]);
+    files::copy_file("/etc/pacman.d/mirrorlist", "/mnt/etc/pacman.d/mirrorlist");
+    get_snigdha_fastest_mirrors();
+}
 
-    exec_eval(
-        exec_chroot(
-            "systemctl",
-            vec![String::from("enable"), String::from("bluetooth")],
-        ),
-        "Enable bluetooth",
-    );
+pub fn install_packages(){
 
-    exec_eval(
-        exec_chroot(
-            "systemctl",
-            vec![String::from("enable"), String::from("cups")],
-        ),
-        "Enable CUPS",
-    );
 }
 
 pub fn genfstab() {
