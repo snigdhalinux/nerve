@@ -1,4 +1,3 @@
-
 use crate::args::PackageManager;
 use crate::internal::exec::*;
 use crate::internal::files::append_file;
@@ -15,7 +14,6 @@ pub fn install_base_packages(kernel: String) {
             "linux" => "linux",
             "linux-lts" => "linux-lts",
             "linux-zen" => "linux-zen",
-            "linux-hardened" => "linux-hardened",
             _ => {
                 warn!("Unknown kernel: {}, using default instead", kernel);
                 "linux"
@@ -224,5 +222,37 @@ pub fn install_zram() {
     files_eval(
         files::append_file("/mnt/etc/systemd/zram-generator.conf", "[zram0]"),
         "Write zram-generator config",
+    );
+}
+
+fn init_snigdha_keyring(){
+    log::info!("Upgrading Keyrings...");
+    exec_eval(
+        exec(
+            "rm",
+            vec![
+                String::from("-rf"),
+                String::from("/etc/pacman.d/gnupg"),
+            ],
+        ),
+        "Removing Keys...",
+    );
+    exec_eval(
+        exec(
+            "pacman-key",
+            vec![
+                String::from("--init"),
+            ],
+        ),
+        "Initiating Keys..."
+    );
+    exec_eval(
+        exec(
+            "pacman-key",
+            vec![
+                String::from("--populate"),
+            ],
+        ),
+        "Populating Keys..."
     );
 }

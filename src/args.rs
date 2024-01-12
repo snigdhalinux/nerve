@@ -1,15 +1,31 @@
-use clap::{ArgEnum, Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
+// use serde_json::value;
 use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
-#[clap(name="jade", version=env!("CARGO_PKG_VERSION"), about=env!("CARGO_PKG_DESCRIPTION"), author=env!("CARGO_PKG_AUTHORS"))]
-pub struct Opt {
-    #[clap(subcommand)]
+#[command(name = "nerve-installer")]
+#[command(author = env!("CARGO_PKG_AUTHORS"))]
+#[command(version = env!("CARGO_PKG_VERSION"))]
+#[command(about = env!("CARGO_PKG_DESCRIPTION"), long_about = None)]
+
+
+pub struct Cli{
+    #[command(subcommand)]
     pub command: Command,
 
-    #[clap(long, short, parse(from_occurrences))]
-    pub verbose: usize,
+    #[arg(long, short, action = clap::ArgAction::Count)]
+    pub verbose: u8,
+}
+
+#[derive(Debug, ValueEnum, Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+pub enum PackageManager {
+    #[value(name = "pacman")]
+    Pacman,
+    #[value(name = "pacstrap")]
+    Pacstrap,
+    #[value(name = "None/DIY")]
+    None,
 }
 
 #[derive(Debug, Subcommand)]
