@@ -244,7 +244,7 @@ fn init_snigdha_keyring(){
                 String::from("--init"),
             ],
         ),
-        "Initiating Keys..."
+        "Initiating Keys...",
     );
     exec_eval(
         exec(
@@ -253,6 +253,41 @@ fn init_snigdha_keyring(){
                 String::from("--populate"),
             ],
         ),
-        "Populating Keys..."
+        "Populating Keys...",
+    );
+    //refreshing Arch Mirrorlist using rate-mirrors
+    exec_eval(
+        exec(
+            "rate-mirrors",
+            vec![
+                String::from("--concurrency"),
+                String::from("40"),
+                String::from("--disable-comments"),
+                String::from("--allow-root"),
+                String::from("--save"),
+                String::from("/etc/pacman.d/mirrorlist"),
+                String::from("arch"),
+            ],
+        ),
+        "Getting fastest mirrors for Arch Linux...",
+    );
+}
+
+fn get_snigdha_fastest_mirrors(){
+    log::info!("Getting Fastest Chaotic Aur Mirrorlist From Your Location...");
+    exec_eval(
+        exec_chroot(
+            "rate-mirrors",
+            vec![
+                String::from("--concurrency"),
+                String::from("40"),
+                String::from("--disable-comments"),
+                String::from("--allow-root"),
+                String::from("--save"),
+                String::from("/etc/pacman.d/mirrorlist"),
+                String::from("chaotic-aur"),
+            ],
+        ),
+        "Setting Fastest Chaotic AUR Mirrors...",
     );
 }
