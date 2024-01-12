@@ -11,5 +11,6 @@ pub fn enable_snigdha_services(){
                 String::from(dm),
             ]
         ),
+        format!("Enable {}", dm).as_str(),
     );
 }
