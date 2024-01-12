@@ -1,7 +1,7 @@
 use crate::internal::exec::*;
 use crate::internal::*;
 
-pub fn enable_snigdha_services(){
+pub fn enable_snigdha_services(dm: &str){
     log::debug("Enabling {}", dm); //4 displyamanagers
     exec_eval(
         exec_chroot(
