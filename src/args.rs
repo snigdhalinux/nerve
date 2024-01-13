@@ -1,15 +1,25 @@
-use clap::{ArgEnum, Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
 #[clap(name="jade", version=env!("CARGO_PKG_VERSION"), about=env!("CARGO_PKG_DESCRIPTION"), author=env!("CARGO_PKG_AUTHORS"))]
-pub struct Opt {
-    #[clap(subcommand)]
+
+pub struct Cli{
+    #[command(subcommand)]
     pub command: Command,
 
-    #[clap(long, short, parse(from_occurrences))]
-    pub verbose: usize,
+    #[arg(short, long, action = clap::ArgAction::Count)]
+    pub verbose: u8,
+}
+
+pub enum PackageManager{
+    #[value(name = "pacman")]
+    Pacman,
+    #[value(name = "pacstarp")]
+    Pacstrap,
+    #[value(name = "None/DIY")]
+    None,
 }
 
 #[derive(Debug, Subcommand)]

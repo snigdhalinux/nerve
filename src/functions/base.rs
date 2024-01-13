@@ -1,5 +1,6 @@
+use crate::args::PackageManager;
 use crate::internal::exec::*;
-use crate::internal::files::append_file;
+// use crate::internal::files::append_file;
 use crate::internal::*;
 use log::warn;
 use std::path::PathBuf;
@@ -7,19 +8,18 @@ use std::path::PathBuf;
 pub fn install_base_packages(kernel: String) {
     std::fs::create_dir_all("/mnt/etc").unwrap();
     let kernel_to_install = if kernel.is_empty() {
-        "linux"
+        "linux-zen"
     } else {
         match kernel.as_str() {
             "linux" => "linux",
             "linux-lts" => "linux-lts",
-            "linux-zen" => "linux-zen",
-            "linux-hardened" => "linux-hardened",
+            "linux-zen" => "linux-zen", //we are not working except!
             _ => {
                 warn!("Unknown kernel: {}, using default instead", kernel);
-                "linux"
+                "linux-zen" //later on I will add snigdha os zen kernel!
             }
         }
-    };
+    }; //lets shift to another fn coz we need to initiate the keyrings!
     install::install(vec![
         // Base Arch
         "base",
