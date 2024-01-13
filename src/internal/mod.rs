@@ -5,6 +5,8 @@ pub mod install;
 pub mod returncode_eval;
 pub mod strings;
 pub mod install;
+mod hardware;
+mod services;
 
 pub use install::install;
 pub use returncode_eval::*;
