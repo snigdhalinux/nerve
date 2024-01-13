@@ -30,11 +30,11 @@ pub enum PackageManager{
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// Partition the install destination
-    #[clap(name = "partition")]
+    #[command(name = "partition")]
     Partition(PartitionArgs),
 
     /// Install base packages, optionally define a different kernel
-    #[clap(name = "install-base")]
+    #[command(name = "install-base")]
     InstallBase(InstallBaseArgs),
 
     /// Generate fstab file for mounting partitions

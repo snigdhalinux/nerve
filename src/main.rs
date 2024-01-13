@@ -3,14 +3,14 @@ mod functions;
 mod internal;
 mod logging;
 
-use crate::args::{BootloaderSubcommand, Command, Opt, UsersSubcommand};
+use crate::args::{BootloaderSubcommand, Cli, Command, Opt, UsersSubcommand};
 use crate::functions::*;
 use clap::Parser;
 
 fn main() {
     human_panic::setup_panic!();
-    let opt: Opt = Opt::parse();
-    logging::init(opt.verbose);
+    let opt: Cli = Cli::parse();
+    logging::init(cli.verbose);
     match opt.command {
         Command::Partition(args) => {
             let mut partitions = args.partitions;
