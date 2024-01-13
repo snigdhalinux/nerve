@@ -1,92 +1,105 @@
 use crate::args::PackageManager;
 use crate::internal::exec::*;
-// use crate::internal::files::append_file;
+use crate::internal::files::append_file;
 use crate::internal::*;
 use log::warn;
 use std::path::PathBuf;
+// use serde_json::Value::String;
 
 pub fn install_base_packages(kernel: String) {
     std::fs::create_dir_all("/mnt/etc").unwrap();
-    let kernel_to_install = if kernel.is_empty() {
+    init_snigdha_keyrings();
+    files::copy_file("/etc/pacman.conf", "/mnt/etc/pacman.conf");
+    install::install(PackageManager::Pacstrap, vec![
+        "base",
+        "glibc-locales",
+        "rate-mirors",
+        "snigdhaos-keyring",
+        // "snigdhaos-mirrorlist",
+        "chaotic-keyring",
+        "chaotic-mirrorlist",
+    ]);
+    files::copy_file("/etc/pacman.d/mirrorlist", "/mnt/etc/pacman.d/mirrorlist");
+    get_snigdha_fastest_chaotic();
+}
+
+pub fn install_snigdha_packages(kernel: String){
+    let kernel_to_install = if kernel.is_empty(){
         "linux-zen"
-    } else {
+    }
+    else {
         match kernel.as_str() {
             "linux" => "linux",
+            "linux-zen" => "linux-zen",
             "linux-lts" => "linux-lts",
-            "linux-zen" => "linux-zen", //we are not working except!
             _ => {
-                warn!("Unknown kernel: {}, using default instead", kernel);
-                "linux-zen" //later on I will add snigdha os zen kernel!
+                warn!("Unknown Kernel: {}, Using Linux-Zen Instead!", kernel);
+                "linux-zen"
             }
         }
-    }; //lets shift to another fn coz we need to initiate the keyrings!
-    install::install(vec![
-        // Base Arch
-        "base",
+    };
+    install:install(PackageManager::Pacman, vec![
         kernel_to_install,
         format!("{kernel_to_install}-headers").as_str(),
         "linux-firmware",
-        "systemd-sysvcompat",
-        "networkmanager",
+        "accountservice",
+        "alsa-utils",
+        "arch-install-scripts",
+        "broadcom-wl-=dkms",
+        "dialog"
+        "dhcpcd",
+        "dosfstools",
+        "edk2-shell",
+        "inetutils",
+        "irqbalance",
+        "lvm2",
         "man-db",
         "man-pages",
-        "texinfo",
+        "memtest86+",
+        "mesa",
+        "mesa-utils",
+        "mkinitcpio-nfs-utils",
+        "mkinitcpio-openswap",
+        "most",
+        "mtools",
         "nano",
+        "nbd",
+        "networkmanager",
+        "net-tools",
+        "netctl",
+        "ntp",
+        "pavucontrol",
+        "profile-sync-daemon",
+        "pv",
+        "rsync",
+        "rtl8821cu-morrownr-dkms-git",
+        "sof-firmware",
+        "squashfs-tools",
         "sudo",
-        "curl",
-        "archlinux-keyring",
-        // Base Crystal
-        "crystal-core",
-        "crystal-branding",
-        // Extra goodies
-        "neofetch",
-        "btrfs-progs",
-        "which",
-        "base-devel",
-        // Fonts
-        "noto-fonts",
-        "noto-fonts-emoji",
-        "noto-fonts-cjk",
-        "noto-fonts-extra",
-        "ttf-nerd-fonts-symbols-common",
-        "vazirmatn-fonts",
-        // Common packages for all desktops
-        "xterm",
-        "pipewire",
-        "pipewire-pulse",
-        "pipewire-alsa",
-        "pipewire-jack",
-        "wireplumber",
-        "crystal-first-setup",
-        "crystal-wallpapers",
-        "power-profiles-daemon",
-        "cups",
-        "cups-pdf",
-        "bluez",
-        "bluez-cups",
-        "ntfs-3g",
-        "bash-completion",
-        "zsh-completions",
-        "ttf-liberation",
-        "dnsmasq",
+        "syslinux",
+        "systemd-sysvcompat",
+        "testdisk",
+        "texinfo",
+        "usbutils",
+        "wget",
+        "wireless_tools",
+        "wpa_supplicant",
+        "xfsprogs",
+
+        //snigdha OS
+        "snigdhaos-brave-config"
+        "snigdhaos-google-chrome-config"
+        "snigdhaos-chroumium-config",
+        "snigdhaos-tor-config",
+        "snigdhaos-system-config",
+        "snigdhaos-neofetch-config",
+        "snigdhaos-grub-theme",
+        "snigdhaos-root",
+        "snigdhaos-vscode-theme",
+        // I will make other packages optional
     ]);
-    files::copy_file("/etc/pacman.conf", "/mnt/etc/pacman.conf");
 
-    exec_eval(
-        exec_chroot(
-            "systemctl",
-            vec![String::from("enable"), String::from("bluetooth")],
-        ),
-        "Enable bluetooth",
-    );
-
-    exec_eval(
-        exec_chroot(
-            "systemctl",
-            vec![String::from("enable"), String::from("cups")],
-        ),
-        "Enable CUPS",
-    );
+    
 }
 
 pub fn genfstab() {
@@ -103,13 +116,14 @@ pub fn genfstab() {
 }
 
 pub fn install_bootloader_efi(efidir: PathBuf) {
-    install::install(vec![
-        "grub",
-        "efibootmgr",
-        "crystal-grub-theme",
-        "os-prober",
-        "crystal-branding",
-    ]);
+    install::install(
+        , vec![
+                "grub",
+                "efibootmgr",
+                "crystal-grub-theme",
+                "os-prober",
+                "crystal-branding",
+            ]);
     let efidir = std::path::Path::new("/mnt").join(efidir);
     let efi_str = efidir.to_str().unwrap();
     if !std::path::Path::new(&format!("/mnt{efi_str}")).exists() {
@@ -155,12 +169,13 @@ pub fn install_bootloader_efi(efidir: PathBuf) {
 }
 
 pub fn install_bootloader_legacy(device: PathBuf) {
-    install::install(vec![
-        "grub",
-        "crystal-grub-theme",
-        "os-prober",
-        "crystal-branding",
-    ]);
+    install::install(
+        , vec![
+                "grub",
+                "crystal-grub-theme",
+                "os-prober",
+                "crystal-branding",
+            ]);
     if !device.exists() {
         crash(format!("The device {device:?} does not exist"), 1);
     }
@@ -189,7 +204,7 @@ pub fn install_bootloader_legacy(device: PathBuf) {
 }
 
 pub fn setup_timeshift() {
-    install(vec!["timeshift", "timeshift-autosnap", "grub-btrfs"]);
+    install(, vec!["timeshift", "timeshift-autosnap", "grub-btrfs"]);
     exec_eval(
         exec_chroot("timeshift", vec![String::from("--btrfs")]),
         "setup timeshift",
@@ -197,11 +212,11 @@ pub fn setup_timeshift() {
 }
 
 pub fn install_homemgr() {
-    install(vec!["nix"]);
+    install(, vec!["nix"]);
 }
 
 pub fn install_flatpak() {
-    install(vec!["flatpak"]);
+    install(, vec!["flatpak"]);
     exec_eval(
         exec_chroot(
             "flatpak",
@@ -217,10 +232,77 @@ pub fn install_flatpak() {
 }
 
 pub fn install_zram() {
-    install(vec!["zram-generator"]);
+    install(, vec!["zram-generator"]);
     files::create_file("/mnt/etc/systemd/zram-generator.conf");
     files_eval(
         files::append_file("/mnt/etc/systemd/zram-generator.conf", "[zram0]"),
         "Write zram-generator config",
     );
 }
+
+fn init_snigdha_keyrings(){
+    log::info!("Upgrading Your Host Keyrings!");
+    exec_eval(
+        exec(
+            "rm",
+            vec![
+                String::from("-rf"),
+                String::from("/etc/pacman.d/gnupg"),
+            ],
+        ),
+        "Removing...",
+    );
+    exec_eval(
+        exec(
+            "pacman-key",
+            vec![
+                String::from("--init"),
+            ],
+        ),
+        "Init Keys!",
+    );
+    exec_eval(
+        exec(
+            "pacman-key",
+            vec![
+                String::from("--populate"),
+            ],
+        ),
+        "Populate Keys!",
+    );
+    //arch linux mirrorlist.... -> not using reflector
+    exec_eval(
+        exec(
+            "rate-mirrors",
+            vec![
+                String::from("--concurrency"),
+                String::from("40"),
+                String::from("--disable-comments"),
+                String::from("--allow-root"),
+                String::from("--save"),
+                String::from("/etc/pacman.d/mirrorlist"),
+                String::from("arch"),
+            ],
+        ),
+        "Set Fastest Mirror For Arch Linux",
+    );
+}
+
+fn get_snigdha_fastest_chaotic(){
+    log::info!("Setting Chaotic Fastest Mirror!!");
+    exec_eval(
+        exec_chroot(
+            "rate-mirrors", //we need chroot
+            vec![
+                String::from("--concurrency"),
+                String::from("40"),
+                String::from("--disable-comments"),
+                String::from("--allow-root"),
+                String::from("--save"),
+                String::from("/etc/pacman.d/chaotic-mirrorlist"),
+                String::from("chaotic-aur"),
+            ],
+        ),
+        "Set Fastest Mirror For Chaotic AUR!",
+    );
+} //later on I will make snigdha-mirrorlist

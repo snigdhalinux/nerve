@@ -5,12 +5,13 @@ use crate::internal::exec::*;
 use crate::internal::*;
 use std::path::PathBuf;
 pub fn install_bootloader_efi(efidir: PathBuf) {
-    install::install(vec![
-        "grub",
-        "efibootmgr",
-        "grub-btrfs",
-        "crystal-grub-theme",
-    ]);
+    install::install(
+        , vec![
+                "grub",
+                "efibootmgr",
+                "grub-btrfs",
+                "crystal-grub-theme",
+            ]);
     let efidir = std::path::Path::new("/mnt").join(efidir);
     let efi_str = efidir.to_str().unwrap();
     if !std::path::Path::new(&format!("/mnt{efi_str}")).exists() {
@@ -158,7 +159,7 @@ pub fn setup_unakite(root: &str, oldroot: &str, efi: bool, efidir: &str, bootdev
     }
     users::root_pass("Cp7oN04ZY0PsA"); // unakite
     desktops::install_desktop_setup(DesktopSetup::Xfce);
-    install(vec!["gparted", "firefox"]);
+    install(, vec!["gparted", "firefox"]);
     exec_eval(
         exec(
             "cp",
