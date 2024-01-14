@@ -127,6 +127,16 @@ pub fn install_snigdha_packages(kernel: String){
         ),
         "SET COMP --> ZSTD",
     );
+
+    //nsswitch.conf
+    files_eval(
+        files::sed_file(
+            "/mnt/etc/nsswitch.conf",
+            "hosts:.*",
+            "hosts: mymachines resolve [!UNAVAIL=return] files dns mdns wins myhostname",
+        ),
+        "--> NSSWITCH CONFIG"
+    );
 }
 
 pub fn genfstab() {
