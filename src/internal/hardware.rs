@@ -1,9 +1,8 @@
-use std::fmt::format;
 use std::process::Command;
 use std::thread::available_parallelism;
 use crate::args::PackageManager;
 use crate::internal::{exec_eval, files, files_eval, install};
-use crate::internal::exec::exec;
+use crate::internal::exec::*;
 use crate::internal::files::sed_file;
 use crate::internal::services::enable_snigdha_services;
 
