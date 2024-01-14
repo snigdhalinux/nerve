@@ -129,7 +129,39 @@ pub fn snigdha_cpu_gpu_check(kernel: &str){
         ]);
         snigdha_gpu_flag = true;
     }
-    //dhon
+
+    if snigdha_gpu_detect.contains("NVIDIA"){
+        log::info!("GPU-->NVIDIA");
+        if snigdha_gpu_detect.contains("GM107") || snigdha_gpu_detect.contains("GM108") || snigdha_gpu_detect.contains("GM200") || snigdha_gpu_detect.contains("GM204") || snigdha_gpu_detect.contains("GM206") || snigdha_gpu_detect.contains("GM20B"){
+            log::info!("NVIDIA --> NV110 Family Detected");
+            snigdha_gpu_flag = true;
+
+            if kernel == "linux"{
+                install(PackageManager::Pacman, vec![
+                    "nvidia"
+                ]);
+            }
+            else if kernel == "linux-lts" {
+                install(PackageManager::Pacman, vec![
+                    "nvidia-lts"
+                ]);
+            }
+            else {
+                install(PackageManager::Pacman, vec![
+                    "nvidia-dkms"
+                ]);
+            }
+            install(PackageManager::Pacman, vec![
+                "nvidia-settings"
+            ]);
+        }
+        //TU102 TU104 TU106 TU116 TU117
+        if snigdha_gpu_detect.contains("TU102") || snigdha_gpu_detect.contains("TU104") || snigdha_gpu_detect.contains("106") || snigdha_gpu_detect.contains("116") || snigdha_gpu_detect.contains("TU117"){
+            log::info!("NVIDIA--> NV160 Family Detected!");
+            snigdha_gpu_flag = true;
+            if kernel =="linux"
+        }
+    }
 }
 
 fn snigdha_cpu_detect() -> String{
