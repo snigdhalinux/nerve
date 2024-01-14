@@ -132,7 +132,9 @@ pub fn snigdha_cpu_gpu_check(kernel: &str){
 
     if snigdha_gpu_detect.contains("NVIDIA"){
         log::info!("GPU-->NVIDIA");
-        if snigdha_gpu_detect.contains("GM107") || snigdha_gpu_detect.contains("GM108") || snigdha_gpu_detect.contains("GM200") || snigdha_gpu_detect.contains("GM204") || snigdha_gpu_detect.contains("GM206") || snigdha_gpu_detect.contains("GM20B"){
+        if snigdha_gpu_detect.contains("GM107") || snigdha_gpu_detect.contains("GM108") 
+        || snigdha_gpu_detect.contains("GM200") || snigdha_gpu_detect.contains("GM204") 
+        || snigdha_gpu_detect.contains("GM206") || snigdha_gpu_detect.contains("GM20B"){
             log::info!("NVIDIA --> NV110 Family Detected");
             snigdha_gpu_flag = true;
 
@@ -156,7 +158,9 @@ pub fn snigdha_cpu_gpu_check(kernel: &str){
             ]);
         }
         //TU102 TU104 TU106 TU116 TU117
-        if snigdha_gpu_detect.contains("TU102") || snigdha_gpu_detect.contains("TU104") || snigdha_gpu_detect.contains("106") || snigdha_gpu_detect.contains("116") || snigdha_gpu_detect.contains("TU117"){
+        if snigdha_gpu_detect.contains("TU102") || snigdha_gpu_detect.contains("TU104") 
+        || snigdha_gpu_detect.contains("106") || snigdha_gpu_detect.contains("116") 
+        || snigdha_gpu_detect.contains("TU117"){
             log::info!("NVIDIA--> NV160 Family Detected!");
             snigdha_gpu_flag = true;
             if kernel =="linux"{
@@ -174,7 +178,11 @@ pub fn snigdha_cpu_gpu_check(kernel: &str){
             ]);
         }
         //GF100 GF108, GF106, GF104, GF110, GF114, GF116, GF117, GF119
-        if snigdha_gpu_detect.contains("GF100") || snigdha_gpu_detect.contains("GF104") || snigdha_gpu_detect.contains("GF106") || snigdha_gpu_detect.contains("GF108") || snigdha_gpu_detect.contains("GF110") || snigdha_gpu_detect. contains("GF114") || snigdha_gpu_detect. contains("GF116") || snigdha_gpu_detect. contains("GF117") || snigdha_gpu_detect. contains("GF119") {
+        if snigdha_gpu_detect.contains("GF100") || snigdha_gpu_detect.contains("GF104") 
+        || snigdha_gpu_detect.contains("GF106") || snigdha_gpu_detect.contains("GF108") 
+        || snigdha_gpu_detect.contains("GF110") || snigdha_gpu_detect. contains("GF114") 
+        || snigdha_gpu_detect. contains("GF116") || snigdha_gpu_detect. contains("GF117") 
+        || snigdha_gpu_detect. contains("GF119") {
             log::info!("DETECTED -> NVDIA NVC0");
             snigdha_gpu_flag = true;
             install(PackageManager::Pacman, vec![
@@ -210,6 +218,46 @@ pub fn snigdha_cpu_gpu_check(kernel: &str){
             install(PackageManager::Pacman, vec![
                 "nvidia-open-dkms",
                 "nvidia-settings"
+            ]);
+        }
+        install(PackageManager::Pacman, vec![
+            "opencl-nvidia",
+            "gwe",
+            "nvtop"
+        ]);
+
+        exec_eval(
+            exec(
+                "sed",
+                vec![
+                    String::from("-i"),
+                    String::from("-e"),
+                    String::from("/"), //I need to to see module sed!!!!!!!!
+                    String::from("-e"),
+                    String::from("/"),
+                    String::from("/mn/etc/mkinitcpio.conf"),
+                ],
+            ),
+            "Set Mod -> NV",
+        );
+        exec_eval(
+            exec(
+                "sed",
+                vec![
+                    String::from("-i"),
+                    String::from("-e"),
+                    String::from("/^GRUB_CMDLINE_LINUX_DEFAULT*/s/\"$/ nvdia-drm.modset=1\"/g"),
+                    // String::from("-e"),
+                    // String::from("/"),
+                    String::from("mnt/etc/default/grub"),
+                ],
+            ),
+            "Init Nvidia GPU KC!"
+        );
+        if snigdha_gpu_detect.contains("INTEL") || snigdha_gpu_detect.contains("AMD") || snigdha_gpu_detect.contains("ATI"){
+            log::info!("--<");
+            install(PackageManager::Pacman, vec![
+                "envycontrol"
             ]);
         }
     }
