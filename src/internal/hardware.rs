@@ -159,8 +159,21 @@ pub fn snigdha_cpu_gpu_check(kernel: &str){
         if snigdha_gpu_detect.contains("TU102") || snigdha_gpu_detect.contains("TU104") || snigdha_gpu_detect.contains("106") || snigdha_gpu_detect.contains("116") || snigdha_gpu_detect.contains("TU117"){
             log::info!("NVIDIA--> NV160 Family Detected!");
             snigdha_gpu_flag = true;
-            if kernel =="linux"
+            if kernel =="linux"{
+                install(PackageManager::Pacman, vec![
+                    "nvidia-open"
+                ]);
+            }
+            else {
+                install(PackageManager::Pacman, vec![
+                    "nividia-open-dkms"
+                ]);
+            }
+            install(PackageManager::Pacman, vec![
+                "nvidia-settings"
+            ]);
         }
+        
     }
 }
 
