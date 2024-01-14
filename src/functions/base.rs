@@ -98,7 +98,35 @@ pub fn install_snigdha_packages(kernel: String){
         "snigdhaos-vscode-theme",
         // I will make other packages optional
     ]);
-    hardware::set
+    hardware::snigdha_set_cores();
+    hardware::snigdha_cpu_gpu_check(kernel_to_install);
+    hardware::snigdha_virt_check();
+
+    exec_eval(
+        exec(
+            "sed",
+            vec![
+                String::from("-i"),
+                String::from("-e"), //need fucking hooks to edit
+                String::from("s/^HOOKS=.*/HOOKS=(base systemd autodetect modconf kms block keyboard sd-vconsole lvm2 filesystems fsck)"),
+                String::from("/mnt/etc/mkinitcpio.conf"),
+            ],
+        ),
+        "-> Set Hooks!"
+    );
+    files::copy_file("/etc/skel/.bashrc", "/mnt/etc/skel/.bashrc");
+    files::copy_file("/mnt/usr/lib/os-release-snigdha", "/mnt/usr/lib/os-release");
+    files::copy_file("/etc/grub.d/40_custom", "/mnt/etc/grub.d/40_custom");
+    files::copy_file("/etc/NetworkManager/system-connections", "/mnt/etc/NetworkManager/system-connections");
+
+    files_eval(
+        files::sed_file(
+            "/mnt/etc/mkinitcpio.conf",
+            "#COMPRESSION=\"zstd\"",
+            "COMPRESSION=\"zstd\"",
+        ),
+        "SET COMP --> ZSTD",
+    );
 }
 
 pub fn genfstab() {

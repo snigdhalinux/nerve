@@ -4,8 +4,8 @@ pub mod files;
 pub mod returncode_eval;
 pub mod strings;
 pub mod install;
-mod hardware;
-mod services;
+pub mod hardware;
+pub mod services;
 
 pub use install::install;
 pub use returncode_eval::*;
