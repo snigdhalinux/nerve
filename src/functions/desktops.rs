@@ -1,4 +1,4 @@
-use crate::args::DesktopSetup;
+use crate::args::{DesktopSetup, PackageManager};
 use crate::internal::exec::*;
 use crate::internal::*;
 
@@ -21,22 +21,22 @@ pub fn install_desktop_setup(desktop_setup: DesktopSetup) {
         DesktopSetup::Bspwm => install_bspwm(),
         DesktopSetup::None => log::debug!("No desktop setup selected"),
     }
-    install_networkmanager();
+    // install_networkmanager();
 }
 
-fn install_networkmanager() {
-    install(, vec!["networkmanager"]);
-    exec_eval(
-        exec_chroot(
-            "systemctl",
-            vec![String::from("enable"), String::from("NetworkManager")],
-        ),
-        "Enable network manager",
-    );
-}
+// fn install_networkmanager() {
+//     install(, vec!["networkmanager"]);
+//     exec_eval(
+//         exec_chroot(
+//             "systemctl",
+//             vec![String::from("enable"), String::from("NetworkManager")],
+//         ),
+//         "Enable network manager",
+//     );
+// }
 
 fn install_bspwm() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "bspwm",
@@ -58,7 +58,7 @@ fn install_bspwm() {
 }
 
 fn install_awesome() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "awesome",
@@ -81,7 +81,7 @@ fn install_awesome() {
 }
 
 fn install_herbstluftwm() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "herbstluftwm",
@@ -104,7 +104,7 @@ fn install_herbstluftwm() {
 }
 
 fn install_i3() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "i3-wm",
@@ -141,7 +141,7 @@ fn install_i3() {
 }
 
 fn install_sway() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg-xwayland",
                 "sway",
@@ -175,7 +175,7 @@ fn install_sway() {
 }
 
 fn install_lxqt() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "lxqt",
@@ -193,7 +193,7 @@ fn install_lxqt() {
 }
 
 fn install_enlightenment() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "enlightenment",
@@ -218,7 +218,7 @@ fn install_enlightenment() {
 }
 
 fn install_xfce() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "xfce4",
@@ -244,7 +244,7 @@ fn install_xfce() {
 }
 
 fn install_mate() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "mate",
@@ -269,7 +269,7 @@ fn install_mate() {
 }
 
 fn install_cinnamon() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "cinnamon",
@@ -296,7 +296,7 @@ fn install_cinnamon() {
 }
 
 fn install_budgie() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "budgie-desktop",
@@ -324,7 +324,7 @@ fn install_budgie() {
 }
 
 fn install_kde() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "plasma",
@@ -342,7 +342,7 @@ fn install_kde() {
 }
 
 fn install_gnome() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "gnome",
@@ -358,7 +358,7 @@ fn install_gnome() {
 }
 
 fn install_onyx() {
-    install(
+    install(PackageManager::Pacman
         , vec![
                 "xorg",
                 "onyx",
