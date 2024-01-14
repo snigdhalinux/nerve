@@ -156,9 +156,8 @@ pub fn install_bootloader_efi(efidir: PathBuf) {
     install::install(PackageManager::Pacman, vec![
                 "grub",
                 "efibootmgr",
-                "crystal-grub-theme",
+                "snigdhaos-grub-theme",
                 "os-prober",
-                "crystal-branding",
             ]);
     let efidir = std::path::Path::new("/mnt").join(efidir);
     let efi_str = efidir.to_str().unwrap();
@@ -171,7 +170,7 @@ pub fn install_bootloader_efi(efidir: PathBuf) {
             vec![
                 String::from("--target=x86_64-efi"),
                 format!("--efi-directory={}", efi_str),
-                String::from("--bootloader-id=crystal"),
+                String::from("--bootloader-id=GRUB"),
                 String::from("--removable"),
             ],
         ),
@@ -183,17 +182,18 @@ pub fn install_bootloader_efi(efidir: PathBuf) {
             vec![
                 String::from("--target=x86_64-efi"),
                 format!("--efi-directory={}", efi_str),
-                String::from("--bootloader-id=crystal"),
+                String::from("--bootloader-id=GRUB"),
             ],
         ),
         "install grub as efi without --removable",
     );
+    snigdha_grub_params();
     files_eval(
         append_file(
             "/mnt/etc/default/grub",
-            "GRUB_THEME=\"/usr/share/grub/themes/crystal/theme.txt\"",
+            "GRUB_THEME=\"/usr/share/grub/themes/snigdhaos-grub-theme/theme.txt\"",
         ),
-        "enable crystal grub theme",
+        "enable snigha os grub theme",
     );
     exec_eval(
         exec_chroot(
@@ -207,9 +207,8 @@ pub fn install_bootloader_efi(efidir: PathBuf) {
 pub fn install_bootloader_legacy(device: PathBuf) {
     install::install(PackageManager::Pacman, vec![
                 "grub",
-                "crystal-grub-theme",
+                "snigdhaos-grub-theme",
                 "os-prober",
-                "crystal-branding",
             ]);
     if !device.exists() {
         crash(format!("The device {device:?} does not exist"), 1);
@@ -222,13 +221,7 @@ pub fn install_bootloader_legacy(device: PathBuf) {
         ),
         "install grub as legacy",
     );
-    files_eval(
-        append_file(
-            "/mnt/etc/default/grub",
-            "GRUB_THEME=\"/usr/share/grub/themes/crystal/theme.txt\"",
-        ),
-        "enable crystal grub theme",
-    );
+    snigdha_grub_params();
     exec_eval(
         exec_chroot(
             "grub-mkconfig",
@@ -341,3 +334,53 @@ fn get_snigdha_fastest_chaotic(){
         "Set Fastest Mirror For Chaotic AUR!",
     );
 } //later on I will make snigdha-mirrorlist
+
+pub fn snigdha_grub_params(){
+    files_eval(
+        files::sed_file(
+            "/mnt/etc/default/grub",
+            "GRUB_DISTRIBUTOR=.*",
+            "GRUB_DISTRIBUTOR=\"Snigdha\"",
+        ),
+        "Setting -> Grub Parameters!"
+    );
+
+    files_eval(
+        files::sed_file(
+            "/mnt/etc/default/grub",
+            "GRUB_CMDLINE_LINUX_DEFAULT=.*",
+            "GRUB_CMDLINE_LINUX_DEFAULT=\"quiet loglevel=3 audit=0 nvme_load=yes zswap.enabled=0 fbcon=nodefer nowatchdog\"",
+        ),
+        "->Kernel Parameters"
+    );
+
+    files_eval(
+        files::sed_file(
+            "/mnt/etc/default/grub",
+            "/#GRUB_DISABLE_OS_PROBER=.*",
+            "GRUB_DISABLE_OS_PROBER=false",
+        ),
+        "Enable --> Dual Boot!"
+    );
+}
+
+pub fn snigdha_snapper(){
+    install(PackageManager::Pacman, vec![
+        "btrfs-assistant",
+        "btrfs-progs",
+        "btrfsmaintenance",
+        "grub-btrfs",
+        "snap-pac",
+        "snap-pac-grub",
+        "snapper-support",
+        "inotify-tools",
+    ]);
+    files_eval(
+        files::sed_file(
+            "/mnt/etc/default/grub-btrfs/config",
+            "#GRUB_BTRFS_LIMIT=.*",
+            "GRUB_BTRFS_LIMIT=\"5\"",
+        ),
+        "Grub BTRFS -> LIMIT!"
+    );
+}
