@@ -190,7 +190,11 @@ pub fn snigdha_cpu_gpu_check(kernel: &str){
                 "nvidia-390xx-settings"
             ]);
         }
-        if snigdha_gpu_detect.contains("GK104") || snigdha_gpu_detect.contains("GK107") || snigdha_gpu_detect.contains("GK106") || snigdha_gpu_detect.contains("GK110") || snigdha_gpu_detect.contains("GK110B") || snigdha_gpu_detect. contains("GK208B") || snigdha_gpu_detect. contains("GK208") || snigdha_gpu_detect. contains("GK20A") || snigdha_gpu_detect. contains("GK210") {
+        if snigdha_gpu_detect.contains("GK104") || snigdha_gpu_detect.contains("GK107") 
+        || snigdha_gpu_detect.contains("GK106") || snigdha_gpu_detect.contains("GK110") 
+        || snigdha_gpu_detect.contains("GK110B") || snigdha_gpu_detect. contains("GK208B") 
+        || snigdha_gpu_detect. contains("GK208") || snigdha_gpu_detect. contains("GK20A") 
+        || snigdha_gpu_detect. contains("GK210") {
             log::info!("DETECTED -> NVDIA NVE0");
             snigdha_gpu_flag = true;
             install(PackageManager::Pacman, vec![
