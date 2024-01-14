@@ -38,7 +38,7 @@ pub fn install_snigdha_packages(kernel: String){
             }
         }
     };
-    install:install(PackageManager::Pacman, vec![
+    install::install(PackageManager::Pacman, vec![
         kernel_to_install,
         format!("{kernel_to_install}-headers").as_str(),
         "linux-firmware",
@@ -46,7 +46,7 @@ pub fn install_snigdha_packages(kernel: String){
         "alsa-utils",
         "arch-install-scripts",
         "broadcom-wl-=dkms",
-        "dialog"
+        "dialog",
         "dhcpcd",
         "dosfstools",
         "edk2-shell",
@@ -87,8 +87,8 @@ pub fn install_snigdha_packages(kernel: String){
         "xfsprogs",
 
         //snigdha OS
-        "snigdhaos-brave-config"
-        "snigdhaos-google-chrome-config"
+        "snigdhaos-brave-config",
+        "snigdhaos-google-chrome-config",
         "snigdhaos-chroumium-config",
         "snigdhaos-tor-config",
         "snigdhaos-system-config",
@@ -98,8 +98,7 @@ pub fn install_snigdha_packages(kernel: String){
         "snigdhaos-vscode-theme",
         // I will make other packages optional
     ]);
-
-    
+    hardware::set
 }
 
 pub fn genfstab() {
@@ -116,8 +115,7 @@ pub fn genfstab() {
 }
 
 pub fn install_bootloader_efi(efidir: PathBuf) {
-    install::install(
-        , vec![
+    install::install(PackageManager::Pacman, vec![
                 "grub",
                 "efibootmgr",
                 "crystal-grub-theme",
@@ -169,8 +167,7 @@ pub fn install_bootloader_efi(efidir: PathBuf) {
 }
 
 pub fn install_bootloader_legacy(device: PathBuf) {
-    install::install(
-        , vec![
+    install::install(PackageManager::Pacman, vec![
                 "grub",
                 "crystal-grub-theme",
                 "os-prober",
