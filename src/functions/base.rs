@@ -2,6 +2,7 @@ use crate::args::PackageManager;
 use crate::internal::exec::*;
 use crate::internal::files::append_file;
 use crate::internal::*;
+use crate::internal::services::enable_snigdha_services;
 use log::warn;
 use std::path::PathBuf;
 // use serde_json::Value::String;
@@ -231,20 +232,20 @@ pub fn install_bootloader_legacy(device: PathBuf) {
     );
 }
 
-pub fn setup_timeshift() {
-    install(, vec!["timeshift", "timeshift-autosnap", "grub-btrfs"]);
-    exec_eval(
-        exec_chroot("timeshift", vec![String::from("--btrfs")]),
-        "setup timeshift",
-    )
-}
+// pub fn setup_timeshift() {
+//     install(, vec!["timeshift", "timeshift-autosnap", "grub-btrfs"]);
+//     exec_eval(
+//         exec_chroot("timeshift", vec![String::from("--btrfs")]),
+//         "setup timeshift",
+//     )
+// }
 
 pub fn install_homemgr() {
-    install(, vec!["nix"]);
+    install(PackageManager::Pacman, vec!["nix"]);
 }
 
 pub fn install_flatpak() {
-    install(, vec!["flatpak"]);
+    install(PackageManager::Pacman, vec!["flatpak"]);
     exec_eval(
         exec_chroot(
             "flatpak",
@@ -260,7 +261,7 @@ pub fn install_flatpak() {
 }
 
 pub fn install_zram() {
-    install(, vec!["zram-generator"]);
+    install(PackageManager::Pacman, vec!["zram-generator"]);
     files::create_file("/mnt/etc/systemd/zram-generator.conf");
     files_eval(
         files::append_file("/mnt/etc/systemd/zram-generator.conf", "[zram0]"),
@@ -383,4 +384,53 @@ pub fn snigdha_snapper(){
         ),
         "Grub BTRFS -> LIMIT!"
     );
+    files_eval(
+        files::sed_file(
+            "/mnt/etc/default/grub-btrfs/config",
+            "#GRUB_BTRFS_SHOW_SNAPSHOTS_FOUND=.*",
+            "GRUB_BTRFS_SHOW_SNAPSHOTS_FOUND=\"false\"",
+        ),
+        "Snapshots!!!!!!!!!!!!!!!!"
+    );
+    files_eval(
+        files::sed_file(
+            "/mnt/etc/default/grub-btrfs/config",
+            "#GRUB_BTRFS_SHOW_TOTAL_SNAPSHOTS_FOUND=.*",
+            "GRUB_BTRFS_SHOW_TOTAL_SNAPSHOTS_FOUND=\"false\"",
+        ),
+        "TOTAL SNPASHOTS --> F!"
+    );
+    files_eval(
+        files::sed_file(
+            "/mnt/etc/conf.d/snapper",
+            "SNAPPER_CONFIGS=.*",
+            "SNAPPER_CONFIGS=\"root\"",
+        ),
+        "TOTAL SNPASHOTS --> C!"
+    );
+    exec_eval(
+        exec_chroot(
+            "btrfs", vec![
+                String::from("subvolume"),
+                String::from("create"),
+                String::from("/.snapshots"),
+            ],
+        ),
+        "/.snapshots -> btrfs sub!"
+    );
+    files::copy_file("/mnt/etc/snapper/config-templates/garda", "/mnt/etc/snapper/configs/root");
+    enable_snigdha_services("grub-brtfsd");
+}
+
+pub fn snigdha_install_cuda(){
+    install(PackageManager::Pacman, vec!["cuda"]);
+}
+
+pub fn enable_system_services(){
+    enable_snigdha_services("bluetooth");
+    enable_snigdha_services("cronie");
+    enable_snigdha_services("irqalance");
+    enable_snigdha_services("NetworkManager");
+    enable_snigdha_services("systemd-timesyncd");
+    enable_snigdha_services("vnstat");
 }
