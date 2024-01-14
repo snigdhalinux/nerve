@@ -173,6 +173,23 @@ pub fn snigdha_cpu_gpu_check(kernel: &str){
                 "nvidia-settings"
             ]);
         }
+        //GF100 GF108, GF106, GF104, GF110, GF114, GF116, GF117, GF119
+        if snigdha_gpu_detect.contains("GF100") || snigdha_gpu_detect.contains("GF104") || snigdha_gpu_detect.contains("GF106") || snigdha_gpu_detect.contains("GF108") || snigdha_gpu_detect.contains("GF110") || snigdha_gpu_detect. contains("GF114") || snigdha_gpu_detect. contains("GF116") || snigdha_gpu_detect. contains("GF117") || snigdha_gpu_detect. contains("GF119") {
+            log::info!("DETECTED -> NVDIA NVC0");
+            snigdha_gpu_flag = true;
+            install(PackageManager::Pacman, vec![
+                "nvidia-340xx-dkms",
+                "nvidia-340xx-settings"
+            ]);
+        }
+        if snigdha_gpu_detect.contains("GK104") || snigdha_gpu_detect.contains("GK107") || snigdha_gpu_detect.contains("GK106") || snigdha_gpu_detect.contains("GK110") || snigdha_gpu_detect.contains("GK110B") || snigdha_gpu_detect. contains("GK208B") || snigdha_gpu_detect. contains("GK208") || snigdha_gpu_detect. contains("GK20A") || snigdha_gpu_detect. contains("GK210") {
+            log::info!("DETECTED -> NVDIA NVE0");
+            snigdha_gpu_flag = true;
+            install(PackageManager::Pacman, vec![
+                "nvidia-470xx-dkms",
+                "nvidia-470xx-settings"
+            ]);
+        }
         
     }
 }
