@@ -178,8 +178,8 @@ pub fn snigdha_cpu_gpu_check(kernel: &str){
             log::info!("DETECTED -> NVDIA NVC0");
             snigdha_gpu_flag = true;
             install(PackageManager::Pacman, vec![
-                "nvidia-340xx-dkms",
-                "nvidia-340xx-settings"
+                "nvidia-390xx-dkms",
+                "nvidia-390xx-settings"
             ]);
         }
         if snigdha_gpu_detect.contains("GK104") || snigdha_gpu_detect.contains("GK107") || snigdha_gpu_detect.contains("GK106") || snigdha_gpu_detect.contains("GK110") || snigdha_gpu_detect.contains("GK110B") || snigdha_gpu_detect. contains("GK208B") || snigdha_gpu_detect. contains("GK208") || snigdha_gpu_detect. contains("GK20A") || snigdha_gpu_detect. contains("GK210") {
@@ -190,7 +190,28 @@ pub fn snigdha_cpu_gpu_check(kernel: &str){
                 "nvidia-470xx-settings"
             ]);
         }
-        
+        //G80, G84, G86, G92, G94, G96, G98, GT200, GT215, GT216, GT218, MCP77, MCP78, MCP79, MCP7A, MCP89
+        if snigdha_gpu_detect.contains("G80") || snigdha_gpu_detect.contains("G84")
+        || snigdha_gpu_detect.contains("G86") || snigdha_gpu_detect.contains("G92")
+        || snigdha_gpu_detect.contains("G94") || snigdha_gpu_detect.contains("G96")
+        || snigdha_gpu_detect.contains("G98") || snigdha_gpu_detect.contains("GT200")
+        || snigdha_gpu_detect.contains("GT215") || snigdha_gpu_detect.contains("GT6216")
+        || snigdha_gpu_detect.contains("GT218") || snigdha_gpu_detect.contains("MCP77")
+        || snigdha_gpu_detect.contains("MCP78") || snigdha_gpu_detect.contains("MCP79")
+        || snigdha_gpu_detect.contains("MCP7A") || snigdha_gpu_detect.contains("MCP89"){
+            log::info!("DETECTED -> NVDIA NV50");
+            snigdha_gpu_flag = true;
+            install(PackageManager::Pacman, vec![
+                "nvidia-340xx-dkms",
+                "nvidia-340xx-settings"
+            ]);
+        }
+        if !snigdha_gpu_flag{
+            install(PackageManager::Pacman, vec![
+                "nvidia-open-dkms",
+                "nvidia-settings"
+            ]);
+        }
     }
 }
 
