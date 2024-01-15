@@ -351,3 +351,33 @@ pub enum ShellSetup{
     #[value(name = "none")]
     None,
 }
+
+#[derive(Debug, ValueEnum, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub enum TerminalSetup{
+    #[value(name = "alacritty")]
+    Alacritty,
+
+    #[value(name = "foot")]
+    Foot,
+
+    #[value(name = "gnome-terminal")]
+    GnomeTerminal,
+
+    #[value(name = "kitty")]
+    Kitty,
+
+    #[value(name = "konsole")]
+    Konsole,
+
+    #[value(name = "terminator")]
+    Terminator,
+
+    #[value(name = "xfce4-terminal")]
+    Xfce,
+
+    #[value(name = "xterm")]
+    Xterm,
+
+    #[value(name = "none")]
+    None,
+}
