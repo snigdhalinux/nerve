@@ -9,3 +9,4 @@ pub mod browsers;
 pub mod displaymangers;
 pub mod shells;
 pub mod terminals;
+pub mod ide;

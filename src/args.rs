@@ -381,3 +381,8 @@ pub enum TerminalSetup{
     #[value(name = "none")]
     None,
 }
+
+#[derive(Debug, ValueEnum, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub enum IdeSetup{
+    #[value(name = "vs")]
+}
