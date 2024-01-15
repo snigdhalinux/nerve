@@ -343,7 +343,7 @@ pub fn snigdha_grub_params(){
             "GRUB_DISTRIBUTOR=.*",
             "GRUB_DISTRIBUTOR=\"Snigdha\"",
         ),
-        "Setting -> Grub Parameters!"
+        "Setting -> Grub Parameters!",
     );
 
     files_eval(
@@ -352,7 +352,7 @@ pub fn snigdha_grub_params(){
             "GRUB_CMDLINE_LINUX_DEFAULT=.*",
             "GRUB_CMDLINE_LINUX_DEFAULT=\"quiet loglevel=3 audit=0 nvme_load=yes zswap.enabled=0 fbcon=nodefer nowatchdog\"",
         ),
-        "->Kernel Parameters"
+        "->Kernel Parameters",
     );
 
     files_eval(
@@ -361,7 +361,7 @@ pub fn snigdha_grub_params(){
             "/#GRUB_DISABLE_OS_PROBER=.*",
             "GRUB_DISABLE_OS_PROBER=false",
         ),
-        "Enable --> Dual Boot!"
+        "Enable --> Dual Boot!",
     );
 }
 
@@ -382,7 +382,7 @@ pub fn snigdha_snapper(){
             "#GRUB_BTRFS_LIMIT=.*",
             "GRUB_BTRFS_LIMIT=\"5\"",
         ),
-        "Grub BTRFS -> LIMIT!"
+        "Grub BTRFS -> LIMIT!",
     );
     files_eval(
         files::sed_file(
@@ -390,7 +390,7 @@ pub fn snigdha_snapper(){
             "#GRUB_BTRFS_SHOW_SNAPSHOTS_FOUND=.*",
             "GRUB_BTRFS_SHOW_SNAPSHOTS_FOUND=\"false\"",
         ),
-        "Snapshots!!!!!!!!!!!!!!!!"
+        "Snapshots!!!!!!!!!!!!!!!!",
     );
     files_eval(
         files::sed_file(
@@ -398,7 +398,7 @@ pub fn snigdha_snapper(){
             "#GRUB_BTRFS_SHOW_TOTAL_SNAPSHOTS_FOUND=.*",
             "GRUB_BTRFS_SHOW_TOTAL_SNAPSHOTS_FOUND=\"false\"",
         ),
-        "TOTAL SNPASHOTS --> F!"
+        "TOTAL SNPASHOTS --> F!",
     );
     files_eval(
         files::sed_file(
@@ -406,7 +406,7 @@ pub fn snigdha_snapper(){
             "SNAPPER_CONFIGS=.*",
             "SNAPPER_CONFIGS=\"root\"",
         ),
-        "TOTAL SNPASHOTS --> C!"
+        "TOTAL SNPASHOTS --> C!",
     );
     exec_eval(
         exec_chroot(
