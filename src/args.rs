@@ -1,5 +1,5 @@
 use clap::{Args, Parser, Subcommand, ValueEnum};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, de::value};
 use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
@@ -253,50 +253,79 @@ pub struct NewUserArgs {
     pub shell: String,
 }
 
-#[derive(Debug, ArgEnum, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, ValueEnum, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Serialize, Deserialize)]
 pub enum DesktopSetup {
-    #[clap(name = "onyx")]
+    #[value(name = "onyx")]
     Onyx,
 
-    #[clap(name = "gnome")]
+    #[value(name = "gnome")]
     Gnome,
 
-    #[clap(name = "kde", aliases = ["plasma"])]
+    #[value(name = "kde", aliases = ["plasma"])]
     Kde,
 
-    #[clap(name = "budgie")]
+    #[value(name = "budgie")]
     Budgie,
 
-    #[clap(name = "cinnamon")]
+    #[value(name = "cinnamon")]
     Cinnamon,
 
-    #[clap(name = "mate")]
+    #[value(name = "mate")]
     Mate,
 
-    #[clap(name = "xfce")]
+    #[value(name = "xfce")]
     Xfce,
 
-    #[clap(name = "enlightenment")]
+    #[value(name = "enlightenment")]
     Enlightenment,
 
-    #[clap(name = "lxqt")]
+    #[value(name = "lxqt")]
     Lxqt,
 
-    #[clap(name = "sway")]
+    #[value(name = "sway")]
     Sway,
 
-    #[clap(name = "i3")]
+    #[value(name = "i3")]
     I3,
 
-    #[clap(name = "herbstluftwm")]
+    #[value(name = "herbstluftwm")]
     Herbstluftwm,
 
-    #[clap(name = "awesome")]
+    #[value(name = "awesome")]
     Awesome,
 
-    #[clap(name = "bspwm")]
+    #[value(name = "bspwm")]
     Bspwm,
 
-    #[clap(name = "None/DIY")]
+    #[value(name = "None/DIY")]
     None,
+}
+
+#[derive(Debug, ValueEnum, Clone, Copy, Ord, PartialEq, PartialOrd, Eq, Serialize, Deserialize)]
+pub enum BrowserSetup {
+    #[value(name = "brave")]
+    Brave,
+
+    #[value(name = "firefox")]
+    FireFox,
+
+    #[value(name = "chrome")]
+    Chrome,
+
+    #[value(name = "chromium")]
+    Chromium,
+
+    #[value(name = "tor")]
+    Tor,
+
+    #[value(name = "waterfox")]
+    WaterFox,
+
+    #[value(name = "none")]
+    None,
+}
+
+#[derive(Debug, ValueEnum, Clone, Copy, Ord, Eq, PartialEq, PartialOrd, Serialize, Deserialize)]
+pub enum DMSetup{
+
 }
