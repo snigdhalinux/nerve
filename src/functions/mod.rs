@@ -7,3 +7,4 @@ pub mod partition;
 pub mod users;
 pub mod browsers;
 pub mod displaymangers;
+pub mod shells;

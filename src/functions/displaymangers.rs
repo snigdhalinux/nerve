@@ -7,7 +7,9 @@ use self::services::enable_snigdha_services;
 pub fn install_snigdha_desktopmanagers(dm_setup: DMSetup){
     log::debug!("Installing -> {:?}", dm_setup);
     match dm_setup {
-        
+        DMSetup::Gdm => install_snigdha_gdm(),
+        DMSetup::Sddm => install_snigdha_sddm(),
+        DMSetup::None => log::debug!("None")
     }
 }
 

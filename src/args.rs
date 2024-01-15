@@ -327,5 +327,27 @@ pub enum BrowserSetup {
 
 #[derive(Debug, ValueEnum, Clone, Copy, Ord, Eq, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub enum DMSetup{
+    #[value(name = "gdm")]
+    Gdm,
 
+    #[value(name = "sddm")]
+    Sddm,
+
+    #[value(name = "none")]
+    None,
+}
+
+#[derive(Debug, ValueEnum, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub enum ShellSetup{
+    #[value(name = "bash")]
+    Bash,
+
+    #[value(name = "fish")]
+    Fish,
+
+    #[value(name = "zsh")]
+    Zsh,
+
+    #[value(name = "none")]
+    None,
 }
