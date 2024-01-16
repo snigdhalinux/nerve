@@ -1,3 +1,4 @@
+use crate::args::PackageManager;
 use crate::internal::exec::*;
 use crate::internal::*;
 use std::process::Command;
@@ -19,7 +20,7 @@ pub fn new_user(username: &str, hasroot: bool, password: &str, do_hash_pass: boo
         "zsh" => "zsh",
         &_ => "bash",
     };
-    install::install(, vec![shell_to_install]);
+    install::install(PackageManager::Pacman, vec![shell_to_install]);
     let shell_path = match shell {
         "bash" => "/bin/bash",
         "csh" => "/usr/bin/csh",
@@ -62,10 +63,10 @@ pub fn new_user(username: &str, hasroot: bool, password: &str, do_hash_pass: boo
             ),
             "Add wheel group to sudoers",
         );
-        files_eval(
-            files::append_file("/mnt/etc/sudoers", "\nDefaults pwfeedback\n"),
-            "Add pwfeedback to sudoers",
-        );
+        // files_eval(
+        //     files::append_file("/mnt/etc/sudoers", "\nDefaults pwfeedback\n"),
+        //     "Add pwfeedback to sudoers",
+        // );
         files_eval(
             files::create_directory("/mnt/var/lib/AccountsService/users/"),
             "Create /mnt/var/lib/AcountsService",
