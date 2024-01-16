@@ -5,10 +5,10 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::process::{Command, Stdio};
 use std::sync::{Arc, Mutex};
 use std::thread;
-use clap::error::ContextValue::Strings;
+// use clap::error::ContextValue::Strings;
 // use flexi_logger::ErrorChannel::File;
-use human_panic::print_msg;
-use serde_json::Value::String;
+// use human_panic::print_msg;
+// use serde_json::Value::String;
 
 pub fn install(pkgmanager: PackageManager, pkgs: Vec<&str>){
     let mut retry = Arc::new(Mutex::new(true));
@@ -17,7 +17,7 @@ pub fn install(pkgmanager: PackageManager, pkgs: Vec<&str>){
         retry = Arc::new(Mutex::new(false));
         let retry_clone = Arc::clone(&retry);
         let mut pkgmanager_cmd = Command::new("true").spawn().expect("Failed To Initiate by 'true'");
-        let mut pkgmanager_name = Strings.new();
+        let mut pkgmanager_name = String::new();
         match pkgmanager {
             PackageManager::Pacman => {
                 pkgmanager_cmd = Command::new("arch-chroot").arg("/mnt").arg("pacman").arg("-Syyu").arg("--needed").arg("--noconfirm").args(&pkgs).stdout(Stdio::piped()).stderr(Stdio::piped()).spawn().expect("Failed To Start Pacman...");
@@ -109,7 +109,7 @@ pub fn install(pkgmanager: PackageManager, pkgs: Vec<&str>){
                             }
                             else {
                                 log::info!(
-                                    "Detected Invalid Signature. Retrying ...", mirror_name
+                                    "Detected Invalid Signature {}. Retrying ...", mirror_name
                                 );
                                 let mut retry = retry_clone.lock().unwrap();
                                 *retry = true;
@@ -168,7 +168,7 @@ fn get_repository_name(package_name: &str) -> String {
             }
         }
         Ok(_) => eprintln!("Package Not Found!"),
-        Err(_) => eprintln("Command Exec Failed!"),
+        Err(_) => eprintln!("Command Exec Failed!"),
     }
     String::new()
 }
@@ -181,7 +181,7 @@ fn extract_package_name(input: &str) -> String {
             error_idx + err_prefix.len()..
         ];
         if let Some(colon_idx) = rem_text.find(colon) {
-            if package_name = rem_text[..colon_idx].trim();
+            let package_name = &rem_text[..colon_idx].trim();
             return package_name.to_string();
         }
     }
@@ -213,7 +213,7 @@ fn move_server_line(mirrorlist_path: &str, mirror_name: &str)-> io::Result<()> {
     Ok(())
 }
 
-fn find_mirrorlist_file(mirror_name: &str, pkgmanager_name: &str) -> Option<String()> {
+fn find_mirrorlist_file(mirror_name: &str, pkgmanager_name: &str) -> Option<String> {
     // todo!()
     let mut mirrorlist_paths: [&str; 2] = ["", ""];
     if pkgmanager_name == "pacstrap"{
@@ -238,7 +238,7 @@ fn find_mirrorlist_file(mirror_name: &str, pkgmanager_name: &str) -> Option<Stri
     None
 }
 
-fn extract_mirror_name(error_message: &str) -> Option<String()> {
+fn extract_mirror_name(error_message: &str) -> Option<String> {
     let words: Vec<&str> = error_message.split_whitespace().collect();
     if let Some(from_index) = words.iter().position(|&word | word == "from"){
         if let Some(mirror_name) = words.get(from_index + 1){
