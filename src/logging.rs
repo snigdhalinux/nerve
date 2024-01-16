@@ -4,7 +4,7 @@ use std::fs;
 use std::io::Write;
 use crate::internal::files;
 
-pub fn init(verbosity: usize, log_file_path: &str) {
+pub fn init(verbosity: u8, log_file_path: &str) {
     let log_specification = match verbosity {
         0 => LogSpecification::builder()
             .default(LevelFilter::Info)
