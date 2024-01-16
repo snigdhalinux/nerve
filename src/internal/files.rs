@@ -48,3 +48,19 @@ pub fn sed_file(path: &str, find: &str, replace: &str) -> std::io::Result<()> {
 pub fn create_directory(path: &str) -> std::io::Result<()> {
     std::fs::create_dir_all(path)
 }
+pub fn rename_file(path: &str, destpath: &str){
+    let return_code = std::fs::rename(path, destpath);
+    match return_code {
+        Ok(_) => {
+            log::info!("Rename {} -> {}", path, destpath);
+        }
+        Err(e) => {
+            crash(
+                format!(
+                    "Rename {} -> {} Failed with {}", path, destpath, e
+                ),
+                1,
+            );
+        }
+    }
+}

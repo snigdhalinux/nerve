@@ -1,9 +1,13 @@
-use crate::args::{self, DMSetup, BrowserSetup};
-use crate::args::{DesktopSetup, PartitionMode};
+use crate::args;
+use crate::args::{DesktopSetup, DMSetup, ShellSetup, BrowserSetup, TerminalSetup, IdeSetup, GitSetup, PartitionMode, PackageManager};
 use crate::functions::*;
 use crate::internal::*;
+// use crate::internal::exec::*;
+// use crate::internal::files::sed_file;
+// use crate::internal::secure;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+
 
 #[derive(Serialize, Deserialize)]
 struct Config {
@@ -17,6 +21,8 @@ struct Config {
     displaymanager: String,
     browser: String,
     terminal: String,
+    ide: String,
+    git: String,
     snapper: bool,
     flatpak: bool,
     zramd: bool,
@@ -215,52 +221,123 @@ pub fn read_config(configpath: PathBuf) {
         _ => log::info!("None!"),
     }
     println!();
-    
-    for i in 0..config.users.len() {
-        log::info!("Creating user : {}", config.users[i].name);
-        log::info!("Setting use password : {}", config.users[i].password);
-        log::info!("Enabling root for user : {}", config.users[i].hasroot);
-        log::info!("Setting user shell : {}", config.users[i].shell);
-        users::new_user(
-            config.users[i].name.as_str(),
-            config.users[i].hasroot,
-            config.users[i].password.as_str(),
-            false,
-            config.users[i].shell.as_str(),
-        );
-        println!("---------");
+    log::info!("Installing Terminal -> {:?}", config.terminal);
+    let mut term_choice = String::new();
+    match config.terminal.to_lowercase().as_str() {
+        "alacritty" => {
+            term_choice = String::from("alacritty");
+            terminals::install_snigdha_terminal(TerminalSetup::Alacritty);
+        },
+        "foot" => {
+            term_choice = String::from("foot");
+            terminals::install_snigdha_terminal(TerminalSetup::Foot);
+        },
+        "gnome-terminal" => {
+            term_choice = String::from("gnome-terminal");
+            terminals::install_snigdha_terminal(TerminalSetup::GnomeTerminal);
+        },
+        "kitty" => {
+            term_choice = String::from("kitty");
+            terminals::install_snigdha_terminal(TerminalSetup::Kitty);
+        },
+        "konsole" => {
+            term_choice = String::from("konsole");
+            terminals::install_snigdha_terminal(TerminalSetup::Konsole);
+        },
+        "xfce" => {
+            term_choice = String::from("xfce");
+            terminals::install_snigdha_terminal(TerminalSetup::Xfce);
+        },
+        "xterm" => {
+            term_choice = String::from("xterm");
+            terminals::install_snigdha_terminal(TerminalSetup::Xterm);
+        },
+        _ => log::info!("None!"),
     }
     println!();
-    log::info!("Setting root password : {}", config.rootpass);
-    users::root_pass(config.rootpass.as_str());
-    println!();
-    log::info!("Installing desktop : {:?}", config.desktop);
-    /*if let Some(desktop) = &config.desktop {
-        desktops::install_desktop_setup(*desktop);
-    }*/
-    match config.desktop.to_lowercase().as_str() {
-        "onyx" => desktops::install_desktop_setup(DesktopSetup::Onyx),
-        "kde" => desktops::install_desktop_setup(DesktopSetup::Kde),
-        "plasma" => desktops::install_desktop_setup(DesktopSetup::Kde),
-        "mate" => desktops::install_desktop_setup(DesktopSetup::Mate),
-        "gnome" => desktops::install_desktop_setup(DesktopSetup::Gnome),
-        "cinnamon" => desktops::install_desktop_setup(DesktopSetup::Cinnamon),
-        "xfce" => desktops::install_desktop_setup(DesktopSetup::Xfce),
-        "budgie" => desktops::install_desktop_setup(DesktopSetup::Budgie),
-        "enlightenment" => desktops::install_desktop_setup(DesktopSetup::Enlightenment),
-        "lxqt" => desktops::install_desktop_setup(DesktopSetup::Lxqt),
-        "sway" => desktops::install_desktop_setup(DesktopSetup::Sway),
-        "i3" => desktops::install_desktop_setup(DesktopSetup::I3),
-        "herbstluftwm" => desktops::install_desktop_setup(DesktopSetup::Herbstluftwm),
-        "awesome" => desktops::install_desktop_setup(DesktopSetup::Awesome),
-        "bspwm" => desktops::install_desktop_setup(DesktopSetup::Bspwm),
-        "none/diy" => desktops::install_desktop_setup(DesktopSetup::None),
-        _ => log::info!("No desktop setup selected!"),
+    log::info!("Installing IDE -> {:?}", config.ide);
+    let mut ide_choice = String::new();
+    match config.ide.to_lowercase().as_str() {
+        "vscode" => {
+            ide_choice = String::from("vscode");
+            ide::install_snigdha_ide(IdeSetup::Vscode);
+        },
+        "vscodium" => {
+            ide_choice = String::from("vscodium");
+            ide::install_snigdha_ide(IdeSetup::Vscodium);
+        },
+        //dhur bal er gaan 
+        "pycharm-pro" => {
+            ide_choice = String::from("pycharm-pro");
+            ide::install_snigdha_ide(IdeSetup::PycharmPro);
+        },
+        "pycharm-comm" => {
+            ide_choice = String::from("pycharm-comm");
+            ide::install_snigdha_ide(IdeSetup::PycharmComm);
+        },
+        "pycharm-eap" => {
+            ide_choice = String::from("pycharm-eap");
+            ide::install_snigdha_ide(IdeSetup::PycharmEAP);
+        },
+        "clion" => {
+            ide_choice = String::from("clion");
+            ide::install_snigdha_ide(IdeSetup::Clion);
+        },
+        "intellij-idea-ultimate" => {
+            ide_choice = String::from("intellij-idea-ultimate");
+            ide::install_snigdha_ide(IdeSetup::IntellijIDEAPro);
+        },
+        "intellij-idea-community" => {
+            ide_choice = String::from("intellij-idea-community");
+            ide::install_snigdha_ide(IdeSetup::IntellijIDEAComm);
+        },
+        "intellij-idea-eap" => {
+            ide_choice = String::from("intellij-idea-eap");
+            ide::install_snigdha_ide(IdeSetup::IntellijIDEAEAP);
+        },
+        "intellij-idea-ca" => {
+            ide_choice = String::from("intellij-idea-ca");
+            ide::install_snigdha_ide(IdeSetup::IntellijIdeaCa);
+        },
+        _ => log::info!("None!")
     }
     println!();
-    log::info!("Enabling timeshift : {}", config.timeshift);
-    if config.timeshift {
-        base::setup_timeshift();
+    log::info!("Installing Git Client -> {:?}", config.git);
+    let mut git_choice = String::new();
+    match config.git.to_lowercase().as_str() {
+        "gitahead" => {
+            git_choice = String::from("gitahead");
+            git::install_snigdha_git(GitSetup::GitAhead);
+        },
+        "gitfiend" => {
+            git_choice = String::from("gitfiend");
+            git::install_snigdha_git(GitSetup::GitFiend);
+        },
+        "gitkraken" => {
+            git_choice = String::from("gitkraken");
+            git::install_snigdha_git(GitSetup::GitKraken);
+        },
+        "github-desktop" => {
+            git_choice = String::from("github-desktop");
+            git::install_snigdha_git(GitSetup::GithubDesktop);
+        },
+        "gittyup" => {
+            git_choice = String::from("gittyup");
+            git::install_snigdha_git(GitSetup::GittyUp);
+        },
+        "megit" => {
+            git_choice = String::from("megit");
+            git::install_snigdha_git(GitSetup::Megit);
+        },
+        "smartgit" => {
+            git_choice = String::from("smartgit");
+            git::install_snigdha_git(GitSetup::SmartGit);
+        },
+        _ => log::info!("None!"),
+    }
+    log::info!("Installing -> Snapper! {:?}", config.snapper);
+    if config.snapper{
+        base::snigdha_snapper();
     }
     println!();
     log::info!("Enabling flatpak : {}", config.flatpak);
@@ -272,71 +349,34 @@ pub fn read_config(configpath: PathBuf) {
     for i in 0..config.extra_packages.len() {
         extra_packages.push(config.extra_packages[i].as_str());
     }
-    install(, extra_packages);
-    log::info!("Setup unakite");
-    if config.partition.mode == PartitionMode::Auto
-        && !config.partition.efi
-        && config.unakite.enable
-        && !config.partition.device.to_string().contains("nvme")
-    {
-        let root = PathBuf::from("/dev/").join(config.partition.device.as_str());
-        unakite::setup_unakite(
-            format!("{}2", root.to_str().unwrap()).as_str(),
-            format!("{}3", root.to_str().unwrap()).as_str(),
-            config.partition.efi,
-            "/boot",
-            format!("{}1", root.to_str().unwrap()).as_str(),
-        )
-    } else if config.partition.mode == PartitionMode::Auto
-        && config.partition.efi
-        && config.unakite.enable
-        && !config.partition.device.to_string().contains("nvme")
-    {
-        let root = PathBuf::from("/dev/").join(config.partition.device.as_str());
-        unakite::setup_unakite(
-            format!("{}2", root.to_str().unwrap()).as_str(),
-            format!("{}3", root.to_str().unwrap()).as_str(),
-            config.partition.efi,
-            "/boot/efi",
-            format!("{}1", root.to_str().unwrap()).as_str(),
-        )
-    } else if config.unakite.enable {
-        unakite::setup_unakite(
-            &config.unakite.root,
-            &config.unakite.oldroot,
-            config.partition.efi,
-            &config.unakite.efidir,
-            &config.unakite.bootdev,
+    install(PackageManager::Pacman, extra_packages);
+    log::info!("Enable System Services!");
+    base::enable_system_services();
+    for i in 0..config.users.len() {
+        log::info!("Creating user : {}", config.users[i].name);
+        // log::info!("Setting use password : {}", config.users[i].password);
+        log::info!("Enabling root for user : {}", config.users[i].hasroot);
+        log::info!("Setting user shell : {}", config.users[i].shell);
+        match config.users[i].shell.to_lowercase().as_str() {
+            "bash" => shells::install_snigdha_shells(ShellSetup::Bash),
+            "fish" => shells::install_snigdha_shells(ShellSetup::Fish),
+            "zsh" => shells::install_snigdha_shells(ShellSetup::Zsh),
+            _ => log::info!("None!"),
+        }
+        users::new_user(
+            config.users[i].name.as_str(),
+            config.users[i].hasroot,
+            config.users[i].password.as_str(),
+            false,
+            "bash"
         );
-    } else if config.partition.mode == PartitionMode::Auto
-        && config.partition.efi
-        && config.unakite.enable
-        && config.partition.device.to_string().contains("nvme")
-    {
-        let root = PathBuf::from("/dev/").join(config.partition.device.as_str());
-        unakite::setup_unakite(
-            format!("{}p2", root.to_str().unwrap()).as_str(),
-            format!("{}p3", root.to_str().unwrap()).as_str(),
-            config.partition.efi,
-            "/boot/efi",
-            format!("{}p1", root.to_str().unwrap()).as_str(),
-        )
-    } else if config.partition.mode == PartitionMode::Auto
-        && !config.partition.efi
-        && config.unakite.enable
-        && config.partition.device.to_string().contains("nvme")
-    {
-        let root = PathBuf::from("/dev/").join(config.partition.device.as_str());
-        unakite::setup_unakite(
-            format!("{}p2", root.to_str().unwrap()).as_str(),
-            format!("{}p3", root.to_str().unwrap()).as_str(),
-            config.partition.efi,
-            "/boot",
-            format!("{}p1", root.to_str().unwrap()).as_str(),
-        )
-    } else {
-        log::info!("Unakite disabled");
+        println!("---------");
     }
+    println!();
+    // log::info!("Setting root password : {}", config.rootpass);
+    users::root_pass(config.rootpass.as_str());
+    println!();
+    files::copy_file("/tmp/nerve.log", "/mnt/var/log/nerve.log");
     println!("Installation finished! You may reboot now!")
 }
 
