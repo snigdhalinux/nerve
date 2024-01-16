@@ -10,3 +10,4 @@ pub mod displaymangers;
 pub mod shells;
 pub mod terminals;
 pub mod ide;
+pub mod git;

@@ -417,3 +417,30 @@ pub enum IdeSetup{
     #[value(name = "none")]
     None,
 }
+
+#[derive(Debug, ValueEnum, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub enum GitSetup {
+    #[value(name = "github-desktop")]
+    GithubDesktop,
+
+    #[value(name ="smartgit")]
+    SmartGit,
+
+    #[value(name = "megit")]
+    Megit,
+
+    #[value(name = "gitahead")]
+    GitAhead,
+
+    #[value(name = "gitfiend")]
+    GitFiend,
+
+    #[value(name = "gittyup")]
+    GittyUp,
+
+    #[value(name = "gitkraken")]
+    GitKraken,
+
+    #[value(name = "none")]
+    None,
+}
