@@ -422,9 +422,9 @@ pub fn snigdha_snapper(){
     enable_snigdha_services("grub-brtfsd");
 }
 
-pub fn snigdha_install_cuda(){
-    install(PackageManager::Pacman, vec!["cuda"]);
-}
+// pub fn snigdha_install_cuda(){
+//     install(PackageManager::Pacman, vec!["cuda"]);
+// }
 
 pub fn enable_system_services(){
     enable_snigdha_services("bluetooth");
