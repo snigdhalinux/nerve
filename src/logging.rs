@@ -1,18 +1,10 @@
-use crate::uwu;
-use flexi_logger::{style, DeferredNow, LogSpecification, Logger};
-use lazy_static::lazy_static;
-use log::{Level, LevelFilter};
-use std::env;
+use flexi_logger::{style, DeferredNow, LogSpecification, Logger, FileSpec, Duplicate};
+use log::LevelFilter;
+use std::fs;
 use std::io::Write;
+use crate::internal::files;
 
-lazy_static! {
-    static ref UWU: bool = env::var("JADE_UWU").map(|v| v == "true").unwrap_or(false);
-    static ref UWU_DEBUG: bool = env::var("JADE_UWU_DEBUG")
-        .map(|v| v == "true")
-        .unwrap_or(false);
-}
-
-pub fn init(verbosity: usize) {
+pub fn init(verbosity: usize, log_file_path: &str) {
     let log_specification = match verbosity {
         0 => LogSpecification::builder()
             .default(LevelFilter::Info)
@@ -24,10 +16,10 @@ pub fn init(verbosity: usize) {
             .default(LevelFilter::Trace)
             .build(),
     };
-    Logger::with(log_specification)
-        .format(format_log_entry)
-        .start()
-        .unwrap();
+    if fs::metadata(log_file_path).is_ok(){
+        files::remove_files(log_file_path) //need to create remove-files
+    }
+    Logger::with(log_specification).log_to_file(FileSpec::default().basename(log_file_path).suffix("log").suppress_timestamp(),).duplicate_to_stderr(Duplicate::All).format(format_log_entry).start().unwrap();
 }
 
 /// Formats a log entry with color
@@ -38,35 +30,14 @@ fn format_log_entry(
 ) -> std::io::Result<()> {
     let msg = record.args().to_string();
     let level = record.level();
-    let msg = apply_uwu(level, msg);
-    let (h, m, s) = now.now().time().as_hms();
+    // let msg = apply_uwu(level, msg);
+    let time = now.now().time();
+    let time_str = time.format("%H:%M:%S").to_string();
     write!(
         w,
-        "[ {} ] {}:{}:{} {}",
+        "[ {} ] {} {}",
         style(level).paint(level.to_string()),
-        h,
-        m,
-        s,
+        time,
         msg
     )
-}
-
-/// Applies uwu if the required environment variables are set
-fn apply_uwu(level: Level, msg: String) -> String {
-    match level {
-        Level::Error | Level::Warn | Level::Info => {
-            if *UWU {
-                uwu!(msg)
-            } else {
-                msg
-            }
-        }
-        Level::Debug | Level::Trace => {
-            if *UWU_DEBUG {
-                uwu!(msg)
-            } else {
-                msg
-            }
-        }
-    }
 }

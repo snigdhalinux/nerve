@@ -5,7 +5,7 @@ mod logging;
 
 use crate::args::{BootloaderSubcommand, Cli, Command, UsersSubcommand};
 use crate::functions::*;
-use crate::internal::secure;
+// use crate::internal::secure;
 use clap::Parser;
 
 fn main() {
@@ -24,7 +24,7 @@ fn main() {
                 &mut partitions,
             );
         }
-        Command::InstallBase(args) => {
+        Command::InstallBase => {
             base::install_base_packages();
         }
         Command::Locale(args) => {
@@ -32,11 +32,13 @@ fn main() {
             locale::set_keyboard(&args.keyboard);
             locale::set_timezone(&args.timezone);
         }
-        Command::InstallBase()
+        Command::InstallPackages(args) =>{
+            base::install_snigdha_packages(args.kernel);
+        }
         Command::GenFstab => {
             base::genfstab();
         }
-        Command::SetupTimeshift => base::setup_timeshift(),
+        Command::SetupSnapper => base::snigdha_snapper(),
         Command::Bootloader { subcommand } => match subcommand {
             BootloaderSubcommand::GrubEfi { efidir } => {
                 base::install_bootloader_efi(efidir);
@@ -78,20 +80,32 @@ fn main() {
         Command::Flatpak => {
             base::install_flatpak();
         }
-        Command::Unakite(args) => {
-            unakite::setup_unakite(
-                &args.root,
-                &args.oldroot,
-                args.efi,
-                &args.efidir,
-                &args.bootdev,
-            );
-        }
         Command::Config { config } => {
             crate::internal::config::read_config(config);
         }
         Command::Desktops { desktop } => {
             desktops::install_desktop_setup(desktop);
+        }
+        Command::DisplayManagers { displaymanager } => {
+            displaymangers::install_snigdha_desktopmanagers(displaymanager);
+        }
+        Command::Shells { shell } => {
+            shells::install_snigdha_shells(shell);
+        }
+        Command::Browsers { browser } => {
+            browsers::snigdha_install_browser(browser);
+        }
+        Command::Terminals { terminal } => {
+            terminals::install_snigdha_terminal(terminal);
+        }
+        Command::Ide { ide } => {
+            ide::install_snigdha_ide(ide);
+        }
+        Command::Git { git } => {
+            git::install_snigdha_git(git);
+        }
+        Command::EnableServices => {
+            base::enable_system_services();
         }
     }
 }
