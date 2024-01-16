@@ -202,54 +202,21 @@ fn partition_with_efi(device: &Path) {
         ),
         "create EFI partition",
     );
-    if unakite {
-        exec_eval(
-            exec(
-                "parted",
-                vec![
-                    String::from("-s"),
-                    String::from(&device),
-                    String::from("mkpart"),
-                    String::from("primary"),
-                    String::from("btrfs"),
-                    String::from("512MIB"),
-                    String::from("10048MIB"),
-                ],
-            ),
-            "create btrfs Unakite root partition",
-        );
-        exec_eval(
-            exec(
-                "parted",
-                vec![
-                    String::from("-s"),
-                    device,
-                    String::from("mkpart"),
-                    String::from("primary"),
-                    String::from("btrfs"),
-                    String::from("10048MIB"),
-                    String::from("100%"),
-                ],
-            ),
-            "create btrfs Crystal root partition",
-        );
-    } else {
-        exec_eval(
-            exec(
-                "parted",
-                vec![
-                    String::from("-s"),
-                    device,
-                    String::from("mkpart"),
-                    String::from("primary"),
-                    String::from("btrfs"),
-                    String::from("512MIB"),
-                    String::from("100%"),
-                ],
-            ),
-            "create btrfs root partition",
-        );
-    }
+    exec_eval(
+        exec(
+            "parted",
+            vec![
+                String::from("-s"),
+                device,
+                String::from("mkpart"),
+                String::from("primary"),
+                String::from("btrfs"),
+                String::from("512MIB"),
+                String::from("100%"),
+            ],
+        ),
+        "create btrfs root partition",
+    );
 }
 
 fn part_nvme(device: &Path, efi: bool) {
