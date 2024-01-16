@@ -163,7 +163,7 @@ pub struct InstallPackagesArgs{
     pub kernel: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Partition {
     pub mountpoint: String,
     pub blockdevice: String,
