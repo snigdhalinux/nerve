@@ -88,7 +88,6 @@ pub fn partition(
     mode: PartitionMode,
     efi: bool,
     partitions: &mut Vec<args::Partition>,
-    // unakite: bool,
 ) {
     println!("{:?}", mode);
     match mode {
@@ -98,16 +97,16 @@ pub fn partition(
             }
             log::debug!("automatically partitioning {device:?}");
             if efi {
-                partition_with_efi(&device, unakite);
+                partition_with_efi(&device);
             } else {
-                partition_no_efi(&device, unakite);
+                partition_no_efi(&device);
             }
             if device.to_string_lossy().contains("nvme")
                 || device.to_string_lossy().contains("mmcblk")
             {
-                part_nvme(&device, efi, unakite);
+                part_nvme(&device, efi);
             } else {
-                part_disk(&device, efi, unakite);
+                part_disk(&device, efi);
             }
         }
         PartitionMode::Manual => {
@@ -129,7 +128,7 @@ pub fn partition(
     }
 }
 
-fn partition_no_efi(device: &Path, unakite: bool) {
+fn partition_no_efi(device: &Path) {
     let device = device.to_string_lossy().to_string();
     exec_eval(
         exec(
@@ -158,57 +157,24 @@ fn partition_no_efi(device: &Path, unakite: bool) {
         ),
         "create bios boot partition",
     );
-    if unakite {
-        exec_eval(
-            exec(
-                "parted",
-                vec![
-                    String::from("-s"),
-                    String::from(&device),
-                    String::from("mkpart"),
-                    String::from("primary"),
-                    String::from("btrfs"),
-                    String::from("512MIB"),
-                    String::from("10048MIB"),
-                ],
-            ),
-            "create btrfs Unakite root partition",
-        );
-        exec_eval(
-            exec(
-                "parted",
-                vec![
-                    String::from("-s"),
-                    device,
-                    String::from("mkpart"),
-                    String::from("primary"),
-                    String::from("btrfs"),
-                    String::from("10048MIB"),
-                    String::from("100%"),
-                ],
-            ),
-            "create btrfs Crystal root partition",
-        );
-    } else {
-        exec_eval(
-            exec(
-                "parted",
-                vec![
-                    String::from("-s"),
-                    device,
-                    String::from("mkpart"),
-                    String::from("primary"),
-                    String::from("btrfs"),
-                    String::from("512MIB"),
-                    String::from("100%"),
-                ],
-            ),
-            "create btrfs root partition",
-        );
-    }
+    exec_eval(
+        exec(
+            "parted",
+            vec![
+                String::from("-s"),
+                device,
+                String::from("mkpart"),
+                String::from("primary"),
+                String::from("btrfs"),
+                String::from("512MIB"),
+                String::from("100%"),
+            ],
+        ),
+        "create btrfs root partition",
+    );
 }
 
-fn partition_with_efi(device: &Path, unakite: bool) {
+fn partition_with_efi(device: &Path) {
     let device = device.to_string_lossy().to_string();
     exec_eval(
         exec(
@@ -286,7 +252,7 @@ fn partition_with_efi(device: &Path, unakite: bool) {
     }
 }
 
-fn part_nvme(device: &Path, efi: bool, unakite: bool) {
+fn part_nvme(device: &Path, efi: bool) {
     let device = device.to_string_lossy().to_string();
     if efi && !unakite {
         exec_eval(
@@ -500,7 +466,7 @@ fn part_nvme(device: &Path, efi: bool, unakite: bool) {
     }
 }
 
-fn part_disk(device: &Path, efi: bool, unakite: bool) {
+fn part_disk(device: &Path, efi: bool) {
     let device = device.to_string_lossy().to_string();
     if efi && !unakite {
         exec_eval(
