@@ -7,7 +7,7 @@ use log::warn;
 use std::path::PathBuf;
 // use serde_json::Value::String;
 
-pub fn install_base_packages(kernel: String) {
+pub fn install_base_packages() {
     std::fs::create_dir_all("/mnt/etc").unwrap();
     init_snigdha_keyrings();
     files::copy_file("/etc/pacman.conf", "/mnt/etc/pacman.conf");
