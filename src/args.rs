@@ -384,5 +384,36 @@ pub enum TerminalSetup{
 
 #[derive(Debug, ValueEnum, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum IdeSetup{
-    #[value(name = "vs")]
+    #[value(name = "vscode")]
+    Vscode,
+
+    #[value(name = "vscodium")]
+    Vscodium,
+
+    #[value(name = "pycharmpro")]
+    PycharmPro,
+
+    #[value(name = "pycharmcom")]
+    PycharmComm,
+
+    #[value(name = "pycharmeap")]
+    PycharmEAP,
+
+    #[value(name = "clion")]
+    Clion,
+
+    #[value(name = "intellijeideapro")]
+    IntellijIDEAPro,
+
+    #[value(name = "intellijideacomm")]
+    IntellijIDEAComm,
+
+    #[value(name = "intellijideaeap")]
+    IntellijIDEAEAP,
+
+    #[value(name = "intellijideaca")]
+    IntellijIdeaCa,
+
+    #[value(name = "none")]
+    None,
 }
