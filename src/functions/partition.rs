@@ -221,7 +221,7 @@ fn partition_with_efi(device: &Path) {
 
 fn part_nvme(device: &Path, efi: bool) {
     let device = device.to_string_lossy().to_string();
-    if efi && !unakite {
+    if efi {
         exec_eval(
             exec(
                 "mkfs.vfat",
@@ -275,7 +275,7 @@ fn part_nvme(device: &Path, efi: bool) {
             "subvol=@home",
         );
         mount(format!("{}p1", device).as_str(), "/mnt/boot/efi", "");
-    } else if !efi && !unakite {
+    } else if !efi {
         exec_eval(
             exec("mkfs.ext4", vec![format!("{}p1", device)]),
             format!("format {}p1 as ext4", device).as_str(),
@@ -322,7 +322,7 @@ fn part_nvme(device: &Path, efi: bool) {
             "subvol=@home",
         );
         mount(format!("{}p1", device).as_str(), "/mnt/boot", "");
-    } else if efi && unakite {
+    } else if efi {
         exec_eval(
             exec(
                 "mkfs.vfat",
@@ -383,7 +383,7 @@ fn part_nvme(device: &Path, efi: bool) {
             "subvol=@home",
         );
         mount(format!("{}p1", device).as_str(), "/mnt/boot/efi", "");
-    } else if !efi && unakite {
+    } else if !efi {
         exec_eval(
             exec("mkfs.ext4", vec![format!("{}p1", device)]),
             format!("format {}p1 as ext4", device).as_str(),
@@ -435,7 +435,7 @@ fn part_nvme(device: &Path, efi: bool) {
 
 fn part_disk(device: &Path, efi: bool) {
     let device = device.to_string_lossy().to_string();
-    if efi && !unakite {
+    if efi {
         exec_eval(
             exec(
                 "mkfs.vfat",
@@ -482,7 +482,7 @@ fn part_disk(device: &Path, efi: bool) {
         files_eval(files::create_directory("/mnt/home"), "create /mnt/home");
         mount(format!("{}2", device).as_str(), "/mnt/home", "subvol=@home");
         mount(format!("{}1", device).as_str(), "/mnt/boot/efi", "");
-    } else if !efi && !unakite {
+    } else if !efi {
         exec_eval(
             exec("mkfs.ext4", vec![format!("{}1", device)]),
             format!("format {}1 as ext4", device).as_str(),
@@ -528,7 +528,7 @@ fn part_disk(device: &Path, efi: bool) {
         );
         mount(format!("{}2", device).as_str(), "/mnt/home", "subvol=@home");
         mount(format!("{}1", device).as_str(), "/mnt/boot", "");
-    } else if efi && unakite {
+    } else if efi {
         exec_eval(
             exec(
                 "mkfs.vfat",
@@ -579,7 +579,7 @@ fn part_disk(device: &Path, efi: bool) {
         files_eval(files::create_directory("/mnt/home"), "create /mnt/home");
         mount(format!("{}3", device).as_str(), "/mnt/home", "subvol=@home");
         mount(format!("{}1", device).as_str(), "/mnt/boot/efi", "");
-    } else if !efi && unakite {
+    } else if !efi {
         exec_eval(
             exec("mkfs.ext4", vec![format!("{}1", device)]),
             format!("format {}1 as ext4", device).as_str(),
