@@ -1,5 +1,5 @@
 use clap::{Args, Parser, Subcommand, ValueEnum};
-use serde::{Deserialize, Serialize, de::value};
+use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
@@ -35,116 +35,132 @@ pub enum Command {
 
     /// Install base packages, optionally define a different kernel
     #[command(name = "install-base")]
-    InstallBase(InstallBaseArgs),
+    InstallBase,
+
+    #[command(name = "install-packages")]
+    InstallPackages(InstallPackagesArgs),
 
     /// Generate fstab file for mounting partitions
-    #[clap(name = "genfstab")]
+    #[command(name = "genfstab")]
     GenFstab,
 
     /// Setup Timeshift
-    #[clap(name = "setup-timeshift")]
-    SetupTimeshift,
+    #[command(name = "setup-snapper")]
+    SetupSnapper,
 
     /// Install the bootloader
-    #[clap(name = "bootloader")]
+    #[command(name = "bootloader")]
     Bootloader {
         #[clap(subcommand)]
         subcommand: BootloaderSubcommand,
     },
 
     /// Set locale
-    #[clap(name = "locale")]
+    #[command(name = "locale")]
     Locale(LocaleArgs),
 
     /// Set up networking
-    #[clap(name = "networking")]
+    #[command(name = "networking")]
     Networking(NetworkingArgs),
 
     /// Set up zramd
-    #[clap(name = "zramd")]
+    #[command(name = "zramd")]
     Zram,
 
     /// Configure users and passwords
-    #[clap(name = "users")]
+    #[command(name = "users")]
     Users {
-        #[clap(subcommand)]
+        #[command(subcommand)]
         subcommand: UsersSubcommand,
     },
 
     /// Install the Nix package manager
-    #[clap(name = "nix")]
+    #[command(name = "nix")]
     Nix,
 
     /// Install Flatpak and enable FlatHub
-    #[clap(name = "flatpak")]
+    #[command(name = "flatpak")]
     Flatpak,
 
-    /// Setup Unakite
-    #[clap(name = "unakite")]
-    Unakite(UnakiteArgs),
-
     /// Read Jade installation config
-    #[clap(name = "config")]
+    #[command(name = "config")]
     Config {
         /// The config file to read
         config: PathBuf,
     },
 
     /// Install a graphical desktop
-    #[clap(name = "desktops")]
+    #[command(name = "desktops")]
     Desktops {
         /// The desktop setup to use
-        #[clap(arg_enum)]
+        #[arg(value_enum)]
         desktop: DesktopSetup,
     },
+
+    #[command(name = "displaymanagers")]
+    DisplayManagers{
+        #[arg(value_enum)]
+        displaymanager: DMSetup,
+    },
+
+    #[command(name = "shells")]
+    Shells{
+        #[arg(value_enum)]
+        shell: ShellSetup,
+    },
+
+    #[command(name = "browsers")]
+    Browsers{
+        #[arg(value_enum)]
+        browser: BrowserSetup,
+    },
+    
+    #[command(name = "terminals")]
+    Terminals{
+        #[arg(value_enum)]
+        terminal: TerminalSetup,
+    },
+
+    #[command(name = "ide")]
+    Ide{
+        #[arg(value_enum)]
+        ide: IdeSetup,
+    },
+
+    #[command(name = "git")]
+    Git{
+        #[arg(value_enum)]
+        git: GitSetup,
+    },
+
+    #[command(name = "enable-services")]
+    EnableServices,
 }
 
 #[derive(Debug, Args)]
 pub struct PartitionArgs {
     /// If jade should automatically partition (mode = auto)
     /// or the user manually partitioned it (mode = manual)
-    #[clap(arg_enum)]
+    #[arg(value_enum)]
     pub mode: PartitionMode,
 
     /// The device to partition
-    #[clap(required_if_eq("mode", "PartitionMode::Auto"))]
+    #[arg(required_if_eq("mode", "PartitionMode::Auto"), required = false)]
     pub device: PathBuf,
 
     /// If the install destination should be partitioned with EFI
-    #[clap(long)]
+    #[arg(long)]
     pub efi: bool,
 
-    #[clap(long)]
-    pub unakite: bool,
-
     /// The partitions to use for manual partitioning
-    #[clap(required_if_eq("mode", "Partition::Manual"), parse(try_from_str = parse_partitions))]
+    #[arg(required_if_eq("mode", "Partition::Manual"), value_parser = parse_partitions)]
     pub partitions: Vec<Partition>,
 }
 
 #[derive(Debug, Args)]
-pub struct InstallBaseArgs {
+pub struct InstallPackagesArgs{
     #[clap(long)]
     pub kernel: String,
-}
-
-#[derive(Debug, Args)]
-pub struct UnakiteArgs {
-    /// Root device of Unakite
-    #[clap(long)]
-    pub root: String,
-    /// Root device of Crystal
-    #[clap(long)]
-    pub oldroot: String,
-    /// Whether the system is an EFI system
-    #[clap(long)]
-    pub efi: bool,
-    /// Boot directory (if not EFI), or EFI directory
-    #[clap(long)]
-    pub efidir: String,
-    /// Blockdev of boot device
-    #[clap(long)]
-    pub bootdev: String,
 }
 
 #[derive(Debug)]
@@ -173,11 +189,11 @@ pub fn parse_partitions(s: &str) -> Result<Partition, &'static str> {
     ))
 }
 
-#[derive(Debug, ArgEnum, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, ValueEnum, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Serialize, Deserialize)]
 pub enum PartitionMode {
-    #[clap(name = "auto")]
+    #[value(name = "auto")]
     Auto,
-    #[clap(name = "manual")]
+    #[value(name = "manual")]
     Manual,
 }
 
@@ -216,18 +232,18 @@ pub struct NetworkingArgs {
     pub hostname: String,
 
     /// Whether IPv6 loopback should be enabled
-    #[clap(long)]
+    #[arg(long)]
     pub ipv6: bool,
 }
 
 #[derive(Debug, Subcommand)]
 pub enum UsersSubcommand {
     /// Create a new user
-    #[clap(name="new-user", aliases=&["newUser"])]
+    #[command(name="new-user", aliases=&["newUser"])]
     NewUser(NewUserArgs),
 
     /// Set the password of the root user
-    #[clap(name="root-password", aliases=&["root-pass", "rootPass"])]
+    #[command(name="root-password", aliases=&["root-pass", "rootPass"])]
     RootPass {
         /// The password to set. NOTE: Takes hashed password, use `openssl passwd -1 <password>` to generate the hash.
         password: String,
@@ -240,7 +256,7 @@ pub struct NewUserArgs {
     pub username: String,
 
     /// If the user should have root privileges
-    #[clap(long, aliases=&["has-root", "sudoer", "root"])]
+    #[arg(long, aliases=&["has-root", "sudoer", "root"])]
     pub hasroot: bool,
 
     /// The password to set. NOTE: Takes hashed password, use `openssl passwd -6 <password>` to generate the hash.

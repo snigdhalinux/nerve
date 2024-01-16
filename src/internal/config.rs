@@ -1,4 +1,4 @@
-use crate::args;
+use crate::args::{self, DMSetup, BrowserSetup};
 use crate::args::{DesktopSetup, PartitionMode};
 use crate::functions::*;
 use crate::internal::*;
@@ -14,11 +14,13 @@ struct Config {
     users: Vec<Users>,
     rootpass: String,
     desktop: String,
-    timeshift: bool,
+    displaymanager: String,
+    browser: String,
+    terminal: String,
+    snapper: bool,
     flatpak: bool,
     zramd: bool,
     extra_packages: Vec<String>,
-    unakite: Unakite,
     kernel: String,
 }
 
@@ -55,15 +57,6 @@ struct Users {
     password: String,
     hasroot: bool,
     shell: String,
-}
-
-#[derive(Serialize, Deserialize)]
-struct Unakite {
-    enable: bool,
-    root: String,
-    oldroot: String,
-    efidir: String,
-    bootdev: String,
 }
 
 pub fn read_config(configpath: PathBuf) {
@@ -107,9 +100,18 @@ pub fn read_config(configpath: PathBuf) {
         config.partition.mode,
         config.partition.efi,
         &mut partitions,
-        config.unakite.enable,
     );
-    base::install_base_packages(config.kernel);
+    println!();
+    base::install_base_packages();
+    println!();
+    log::info!("Adding Locales -> {:?}", config.locale.locale);
+    locale::set_locale(config.locale.locale.join(" "));
+    log::info!("Keymap -> {:?}", config.locale.keymap);
+    locale::set_keyboard(config.locale.keymap.as_str());
+    log::info!("Timezon -> {:?}", config.locale.timezone);
+    locale::set_timezone(config.locale.timezone.as_str());
+    println!();
+    base::install_snigdha_packages(config.kernel);
     base::genfstab();
     println!();
     log::info!("Installing bootloader : {}", config.bootloader.r#type);
@@ -119,13 +121,6 @@ pub fn read_config(configpath: PathBuf) {
     } else if config.bootloader.r#type == "grub-legacy" {
         base::install_bootloader_legacy(PathBuf::from(config.bootloader.location));
     }
-    println!();
-    log::info!("Adding Locales : {:?}", config.locale.locale);
-    log::info!("Using keymap : {}", config.locale.keymap);
-    log::info!("Setting timezone : {}", config.locale.timezone);
-    locale::set_locale(config.locale.locale.join(" "));
-    locale::set_keyboard(config.locale.keymap.as_str());
-    locale::set_timezone(config.locale.timezone.as_str());
     println!();
     log::info!("Hostname : {}", config.networking.hostname);
     log::info!("Enabling ipv6 : {}", config.networking.ipv6);
@@ -141,7 +136,86 @@ pub fn read_config(configpath: PathBuf) {
         base::install_zram();
     }
     println!();
-    println!("---------");
+    log::info!("Installing Desktop -> {:?}", config.desktop);
+    match config.desktop.to_lowercase().as_str() {
+        "onyx" => desktops::install_desktop_setup(DesktopSetup::Onyx),
+        "kde" => desktops::install_desktop_setup(DesktopSetup::Kde),
+        "plasma" => desktops::install_desktop_setup(DesktopSetup::Kde),
+        "mate" => desktops::install_desktop_setup(DesktopSetup::Mate),
+        "gnome" => {
+            desktops::install_desktop_setup(DesktopSetup::Gnome);
+            disable_xsession("gnome.desktop");
+            disable_xsession("gnome-classic.desktop");
+            disable_xsession("gnome-classic-xorg.desktop");
+            disable_wsession("gnome.desktop");
+            disable_wsession("gnome-wayland.desktop");
+            disable_wsession("gnome-classic-xorg.desktop");
+            disable_wsession("gnome-classic-wayland.desktop");
+        },
+        "cinnamon" => desktops::install_desktop_setup(DesktopSetup::Cinnamon),
+        "xfce" => desktops::install_desktop_setup(DesktopSetup::Xfce),
+        "budgie" => desktops::install_desktop_setup(DesktopSetup::Budgie),
+        "enlightenment" => desktops::install_desktop_setup(DesktopSetup::Enlightenment),
+        "lxqt" => desktops::install_desktop_setup(DesktopSetup::Lxqt),
+        "sway" => desktops::install_desktop_setup(DesktopSetup::Sway),
+        "i3" => desktops::install_desktop_setup(DesktopSetup::I3),
+        "herbstluftwm" => desktops::install_desktop_setup(DesktopSetup::Herbstluftwm),
+        "awesome" => desktops::install_desktop_setup(DesktopSetup::Awesome),
+        "bspwm" => desktops::install_desktop_setup(DesktopSetup::Bspwm),
+        "none/diy" => desktops::install_desktop_setup(DesktopSetup::None),
+        _ => log::info!("No desktop setup selected!"),
+    }
+    println!();
+    log::info!("Installing Display Managers -> {:?}", config.displaymanager);
+    match config.displaymanager.to_lowercase().as_str() {
+        "gdm" => {
+            displaymangers::install_snigdha_desktopmanagers(DMSetup::Gdm);
+            if !config.desktop.contains("gnome"){
+                files::rename_file("/mnt/usr/lib/udev/rules.d/61-gdm.rules", "/mnt/usr/lib/udev/rules.d/61-gdm.rules.bak");
+                disable_xsession("gnome.desktop");
+                disable_xsession("gnome-xorg.desktop");
+                disable_wsession("gnome.desktop");
+                disable_wsession("gnome-wayland.desktop");
+            }
+            else {
+                files_eval(
+                    files::sed_file(
+                        "/mnt/etc/gdm/custom.conf",
+                        ".*WaylandEnable=.*",
+                        "WaylandEnable=false"
+                    ),
+                    "Diasble -> WayLand!"
+                );
+            }
+        },
+        "sddm" => displaymangers::install_snigdha_desktopmanagers(DMSetup::Sddm),
+        _ => log::info!("No DM Selected!"),
+    }
+    println!();
+    log::info!("Installing Browser _> {:?}", config.browser);
+    match config.browser.to_lowercase().as_str() {
+        "brave" => {
+            browsers::snigdha_install_browser(BrowserSetup::Brave);
+        },
+        "firefox" => {
+            browsers::snigdha_install_browser(BrowserSetup::FireFox);
+        },
+        "chrome" => {
+            browsers::snigdha_install_browser(BrowserSetup::Chrome);
+        },
+        "chromium" => {
+            browsers::snigdha_install_browser(BrowserSetup::Chromium);
+        },
+        "tor" => {
+            browsers::snigdha_install_browser(BrowserSetup::Tor);
+        },
+        "waterfox" => {
+            browsers::snigdha_install_browser(BrowserSetup::WaterFox);
+        },
+        _ => log::info!("None!"),
+    }
+    println!();
+    
     for i in 0..config.users.len() {
         log::info!("Creating user : {}", config.users[i].name);
         log::info!("Setting use password : {}", config.users[i].password);
@@ -264,4 +338,15 @@ pub fn read_config(configpath: PathBuf) {
         log::info!("Unakite disabled");
     }
     println!("Installation finished! You may reboot now!")
+}
+
+
+fn disable_xsession(session: &str){
+    log::debug!("Disabling -> {}", session);
+    files::rename_file(&("/mnt/usr/share/xsessions/".to_owned()+session), &("/mnt/usr/share/xsessions/".to_owned()+session+".disable"));
+}
+
+fn disable_wsession(session: &str){
+    log::debug!("Disabling -> {}", session);
+    files::rename_file(&("/mnt/usr/share/wayland-sessions/".to_owned()+session), &("/mnt/usr/share/wayland-sessions/".to_owned()+session+".disable"));
 }

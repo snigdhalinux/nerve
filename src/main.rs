@@ -3,15 +3,18 @@ mod functions;
 mod internal;
 mod logging;
 
-use crate::args::{BootloaderSubcommand, Cli, Command, Opt, UsersSubcommand};
+use crate::args::{BootloaderSubcommand, Cli, Command, UsersSubcommand};
 use crate::functions::*;
+use crate::internal::secure;
 use clap::Parser;
 
 fn main() {
     human_panic::setup_panic!();
-    let opt: Cli = Cli::parse();
-    logging::init(cli.verbose);
-    match opt.command {
+    let cli: Cli = Cli::parse();
+    println!("verbose: {}", cli.verbose);
+    let log_file_path = "/tmp/nerve";
+    logging::init(cli.verbose, log_file_path);
+    match cli.command {
         Command::Partition(args) => {
             let mut partitions = args.partitions;
             partition::partition(
@@ -19,12 +22,17 @@ fn main() {
                 args.mode,
                 args.efi,
                 &mut partitions,
-                args.unakite,
             );
         }
         Command::InstallBase(args) => {
-            base::install_base_packages(args.kernel);
+            base::install_base_packages();
         }
+        Command::Locale(args) => {
+            locale::set_locale(args.locales.join(" "));
+            locale::set_keyboard(&args.keyboard);
+            locale::set_timezone(&args.timezone);
+        }
+        Command::InstallBase()
         Command::GenFstab => {
             base::genfstab();
         }
@@ -37,11 +45,7 @@ fn main() {
                 base::install_bootloader_legacy(device);
             }
         },
-        Command::Locale(args) => {
-            locale::set_locale(args.locales.join(" "));
-            locale::set_keyboard(&args.keyboard);
-            locale::set_timezone(&args.timezone);
-        }
+        
         Command::Networking(args) => {
             if args.ipv6 {
                 network::create_hosts();

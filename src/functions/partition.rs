@@ -88,7 +88,7 @@ pub fn partition(
     mode: PartitionMode,
     efi: bool,
     partitions: &mut Vec<args::Partition>,
-    unakite: bool,
+    // unakite: bool,
 ) {
     println!("{:?}", mode);
     match mode {
